@@ -32,6 +32,7 @@ class Board:
                     self.board[row].append(Piece(BLACK_PIECE, row, col))
                 else:
                     self.board[row].append(0)
+        print(self.board)
 
 
     def move_piece(self,piece,row,col):
@@ -178,3 +179,72 @@ class Board:
             row += 1
 
         return moves
+
+    def threeInRow(self,row,col,piece):
+
+        #TopLeft
+        if row > 0 and col > 0:
+            if self.board[row-1][col-1] != 0 and self.board[row-1][col-1].color == piece:
+                if row > 1 and col > 1 and self.board[row-2][col-2] != 0 and self.board[row-2][col-2].color == piece:
+                    return True
+                elif row < 4 and col < 4 and self.board[row+1][col+1] != 0 and self.board[row+1][col+1].color == piece:
+                    return True
+        
+        #Top
+        if row > 0:
+            if self.board[row-1][col] != 0 and self.board[row-1][col].color == piece:
+                if row > 1 and self.board[row-2][col] != 0 and self.board[row-2][col].color == piece:
+                    return True
+                elif row < 4 and self.board[row+1][col] != 0 and self.board[row+1][col].color == piece:
+                    return True
+
+        #TopRight
+        if row > 0 and col < 4:
+            if self.board[row-1][col+1] != 0 and self.board[row-1][col+1].color == piece:
+                if row > 1 and col < 3 and self.board[row-2][col+2] != 0 and self.board[row-2][col+2].color == piece:
+                    return True
+                elif row < 4 and col > 0  and self.board[row+1][col-1] != 0 and self.board[row+1][col-1].color == piece:
+                    return True
+        
+        #Right
+        if col < 4:
+            if self.board[row][col+1] != 0 and self.board[row][col+1].color == piece:
+                if col < 3 and self.board[row][col+2] != 0 and self.board[row][col+2].color == piece:
+                    return True
+                elif col > 0 and self.board[row][col-1] != 0 and self.board[row][col-1].color == piece:
+                    return True
+
+        #BottomLeft
+        if row < 4 and col < 4:
+            if self.board[row+1][col+1] != 0 and self.board[row+1][col+1].color == piece:
+                if row < 3 and col < 3 and self.board[row+2][col+2] != 0 and self.board[row+2][col+2].color == piece:
+                    return True
+                elif row > 0 and col > 0 and self.board[row-1][col-1] != 0 and self.board[row-1][col-1].color == piece:
+                    return True
+
+        #Bottom
+        if row < 4:
+            if self.board[row+1][col] != 0 and self.board[row+1][col].color == piece:
+                if row < 3 and self.board[row+2][col] !=0 and self.board[row+2][col].color == piece:
+                    return True
+                elif row > 0 and self.board[row-1][col] !=0 and self.board[row-1][col].color == piece:
+                    return True
+
+        #BottomRight
+        if row < 4 and col > 0:
+            if self.board[row+1][col-1] != 0 and self.board[row+1][col-1].color == piece:
+                if row < 3 and col > 1 and self.board[row+2][col-2] != 0 and self.board[row+2][col-2].color == piece:
+                    return True
+                elif row > 0 and col < 4 and self.board[row-1][col+1] != 0 and self.board[row-1][col+1].color == piece:
+                    return True
+
+
+        #Left
+        if col > 0:
+            if self.board[row][col-1] != 0 and self.board[row][col-1].color == piece:
+                if col > 1 and self.board[row][col-2] != 0 and self.board[row][col-2].color == piece:
+                    return True
+                elif col < 4 and self.board[row][col+1] != 0 and self.board[row][col+1].color == piece:
+                    return True
+
+        return False

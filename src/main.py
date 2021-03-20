@@ -32,12 +32,10 @@ def main():
                 pos = pygame.mouse.get_pos()
                 row, col = get_row_col_from_mouse(pos)
                 game.select(row,col)
-                '''piece = board.get_piece(row,col)
-                if(piece != 0):
-                    board.possible_piece_moves(piece)'''
-        
-        #board.draw(WINDOW)
-        #pygame.display.update()
+                if game.checkWin(row,col):
+                    print("Vitória")
+                    run = False
+
         game.update()
         
     
