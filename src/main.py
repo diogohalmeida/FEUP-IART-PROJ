@@ -1,4 +1,11 @@
 import pygame
+import pygame_menu
+from constants import WHITE_PIECE, BLACK_PIECE
+from copy import deepcopy
+import sys
+sys.setrecursionlimit(1000)
+pygame.init()
+
 from constants import WIDTH, HEIGHT, SQUARE_SIZE
 from classes.game import Game
 
@@ -17,13 +24,13 @@ def get_row_col_from_mouse(pos):
 
 def main():
     run = True
-    clock = pygame.time.Clock()
-
+    
+    #clock = pygame.time.Clock()
     #board = Board()
     game = Game(WINDOW)
     
     while run:
-        clock.tick(FPS)
+        #clock.tick(FPS)
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -32,9 +39,21 @@ def main():
                 pos = pygame.mouse.get_pos()
                 row, col = get_row_col_from_mouse(pos)
                 game.select(row,col)
-                if game.checkWin(row,col):
-                    print("Vitória")
-                    run = False
+                game.update()
+                continue
+                '''if game.checkWin() != -1:
+                    print("Vitória")'''
+
+        if game.getPlayer() == 2:
+            row, col = game.getLastMove()
+            (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, 7, -2, 2)
+            game.selected = oldRow, oldCol
+            game.ai_move(finalRow, finalCol)
+
+        
+        '''if game.checkWin():
+            print("Vitória")
+            run = False'''
 
         game.update()
         
@@ -42,4 +61,5 @@ def main():
     pygame.quit()
 
 
-main()
+if __name__ == "__main__":
+    main()

@@ -1,182 +1,181 @@
-import pygame
 from .piece import Piece
 from constants import *
 
 class Board:
     def __init__(self):
         self.board = []
+        self.blackPieces = []
+        self.whitePieces = []
         self.create_board()
-
-    def draw(self, window):
-        window.fill(WHITE)
-        
-        for row in range(ROWS):
-            for col in range(COLS):
-                pygame.draw.rect(window, BLUE, (row*SQUARE_SIZE,col*SQUARE_SIZE,SQUARE_SIZE,SQUARE_SIZE), 0)
-                pygame.draw.rect(window, BLACK, (row*SQUARE_SIZE,col*SQUARE_SIZE,SQUARE_SIZE,SQUARE_SIZE), 1)
-
-
-        for row in range(ROWS):
-            for col in range(COLS):
-                piece = self.board[row][col]
-                if piece != 0:
-                    piece.draw(window)
 
     def create_board(self):
         for row in range(ROWS):
             self.board.append([])
             for col in range(COLS):
                 if (col == 1 and row == 0) or (col == 3 and row == 0) or (col == 2 and row == 3):
-                    self.board[row].append(Piece(WHITE_PIECE, row, col))
+                    #piece = Piece("white", row, col)
+                    self.board[row].append(2)
+                    self.whitePieces.append((row,col))
                 elif (col == 2 and row == 1) or (col == 1 and row == 4) or (col == 3 and row == 4):
-                    self.board[row].append(Piece(BLACK_PIECE, row, col))
+                    #piece = Piece("black", row, col)
+                    self.board[row].append(1)
+                    self.blackPieces.append((row,col))
                 else:
                     self.board[row].append(0)
-        print(self.board)
+
+    def get_black_pieces(self):
+        return self.blackPieces
+
+    def get_white_pieces(self):
+        return self.whitePieces
 
 
-    def move_piece(self,piece,row,col):
-        self.board[piece.row][piece.col], self.board[row][col] = self.board[row][col], self.board[piece.row][piece.col]
-        piece.move(row,col)
+    def move_piece(self,oldRow, oldCol, newRow, newCol):
+        piece = self.board[oldRow][oldCol]
+
+        if piece == 1:
+            self.blackPieces.remove((oldRow,oldCol))
+            self.blackPieces.append((newRow,newCol))
+
+        else:
+            self.whitePieces.remove((oldRow,oldCol))
+            self.whitePieces.append((newRow,newCol))
+       
+        self.board[oldRow][oldCol] = 0
+        self.board[newRow][newCol] = piece
+
 
     def get_piece(self,row,col):
         return self.board[row][col]
-
-
-    def draw_valid_moves(self,moves):
-        for move in moves:
-            row, col = move
-            pygame.draw.circle(self.win)
-
     
-    def get_valid_moves(self,piece):
+    def get_valid_moves(self, row, col):
         moves = []
         #Left
-        for col in range(piece.col-1,-1,-1):
-            if self.board[piece.row][col] != 0:
+        for c in range(col-1,-1,-1):
+            if self.board[row][c] != 0:
                 break
 
-            elif col == 0:
-                moves.append((piece.row,col))
+            elif c == 0:
+                moves.append((row,c))
                 break
 
-            elif self.board[piece.row][col-1] != 0:
-                moves.append((piece.row,col))
+            elif self.board[row][c-1] != 0:
+                moves.append((row,c))
                 break
         #Right
-        for col in range(piece.col+1,5):
-            if(self.board[piece.row][col] != 0):
+        for c in range(col+1,5):
+            if(self.board[row][c] != 0):
                 break
 
-            elif col == 4:
-                moves.append((piece.row,col))
+            elif c == 4:
+                moves.append((row,c))
                 break
 
-            elif self.board[piece.row][col+1] != 0:
-                moves.append((piece.row,col))
+            elif self.board[row][c+1] != 0:
+                moves.append((row,c))
                 break
         #Top
-        for row in range(piece.row-1,-1,-1):
-            if self.board[row][piece.col] != 0:
+        for r in range(row-1,-1,-1):
+            if self.board[r][col] != 0:
                 break
 
-            elif row == 0:
-                moves.append((row,piece.col))
+            elif r == 0:
+                moves.append((r,col))
                 break
 
-            elif self.board[row-1][piece.col] != 0:
-                moves.append((row,piece.col))
+            elif self.board[r-1][col] != 0:
+                moves.append((r,col))
                 break
 
         #Bottom
-        for row in range(piece.row+1,5):
-            if self.board[row][piece.col] != 0:
+        for r in range(row+1,5):
+            if self.board[r][col] != 0:
                 break
 
-            elif row == 4:
-                moves.append((row,piece.col))
+            elif r == 4:
+                moves.append((r,col))
                 break
 
-            elif self.board[row+1][piece.col] != 0:
-                moves.append((row,piece.col))
+            elif self.board[r+1][col] != 0:
+                moves.append((r,col))
                 break
 
         #TopLeft
-        col = piece.col-1
-        row = piece.row-1
-        while col != -1 and row != -1:
+        c = col-1
+        r = row-1
+        while c != -1 and r != -1:
 
-            if self.board[row][col] != 0:
+            if self.board[r][c] != 0:
                 break
 
-            elif col == 0 or row == 0:
-                moves.append((row,col))
+            elif c == 0 or r == 0:
+                moves.append((r,c))
                 break
 
-            elif self.board[row-1][col-1] != 0:
-                moves.append((row,col))
+            elif self.board[r-1][c-1] != 0:
+                moves.append((r,c))
                 break
 
-            col -= 1
-            row -= 1
+            c -= 1
+            r -= 1
 
         #BottomLeft
-        col = piece.col-1
-        row = piece.row+1
-        while col != -1 and row != 5:
+        c = col-1
+        r = row+1
+        while c != -1 and r != 5:
 
-            if self.board[row][col] != 0:
+            if self.board[r][c] != 0:
                 break
 
-            elif col == 0 or row == 4:
-                moves.append((row,col))
+            elif c == 0 or r == 4:
+                moves.append((r,c))
                 break
 
-            elif self.board[row+1][col-1] != 0:
-                moves.append((row,col))
+            elif self.board[r+1][c-1] != 0:
+                moves.append((r,c))
                 break
 
-            col -= 1
-            row += 1
+            c -= 1
+            r += 1
 
         
         #TopRight
-        col = piece.col+1
-        row = piece.row-1
-        while col != 5 and row != -1:
+        c = col+1
+        r = row-1
+        while c != 5 and r != -1:
 
-            if self.board[row][col] != 0:
+            if self.board[r][c] != 0:
                 break
 
-            elif col == 4 or row == 0:
-                moves.append((row,col))
+            elif c == 4 or r == 0:
+                moves.append((r,c))
                 break
 
-            elif self.board[row-1][col+1] != 0:
-                moves.append((row,col))
+            elif self.board[r-1][c+1] != 0:
+                moves.append((r,c))
                 break
 
-            col += 1
-            row -= 1
+            c += 1
+            r -= 1
         
         #BottomRight
-        col = piece.col+1
-        row = piece.row+1
-        while col != 5 and row != 5:
+        c = col+1
+        r = row+1
+        while c != 5 and r != 5:
 
-            if self.board[row][col] != 0:
+            if self.board[r][c] != 0:
                 break
 
-            elif col == 4 or row == 4:
-                moves.append((row,col))
+            elif c == 4 or r == 4:
+                moves.append((r,c))
                 break
 
-            elif self.board[row+1][col+1] != 0:
-                moves.append((row,col))
+            elif self.board[r+1][c+1] != 0:
+                moves.append((r,c))
                 break
 
-            col += 1
-            row += 1
+            c += 1
+            r += 1
 
         return moves
 
@@ -184,67 +183,67 @@ class Board:
 
         #TopLeft
         if row > 0 and col > 0:
-            if self.board[row-1][col-1] != 0 and self.board[row-1][col-1].color == piece:
-                if row > 1 and col > 1 and self.board[row-2][col-2] != 0 and self.board[row-2][col-2].color == piece:
-                    return True
-                elif row < 4 and col < 4 and self.board[row+1][col+1] != 0 and self.board[row+1][col+1].color == piece:
-                    return True
+            if self.board[row-1][col-1] == piece:
+                if row > 1 and col > 1 and self.board[row-2][col-2] == piece:
+                    return piece
+                elif row < 4 and col < 4 and self.board[row+1][col+1] == piece:
+                    return piece
         
         #Top
         if row > 0:
-            if self.board[row-1][col] != 0 and self.board[row-1][col].color == piece:
-                if row > 1 and self.board[row-2][col] != 0 and self.board[row-2][col].color == piece:
-                    return True
-                elif row < 4 and self.board[row+1][col] != 0 and self.board[row+1][col].color == piece:
-                    return True
+            if self.board[row-1][col] == piece:
+                if row > 1 and self.board[row-2][col] == piece:
+                    return piece
+                elif row < 4 and self.board[row+1][col] == piece:
+                    return piece
 
         #TopRight
         if row > 0 and col < 4:
-            if self.board[row-1][col+1] != 0 and self.board[row-1][col+1].color == piece:
-                if row > 1 and col < 3 and self.board[row-2][col+2] != 0 and self.board[row-2][col+2].color == piece:
-                    return True
-                elif row < 4 and col > 0  and self.board[row+1][col-1] != 0 and self.board[row+1][col-1].color == piece:
-                    return True
+            if self.board[row-1][col+1] == piece:
+                if row > 1 and col < 3 and self.board[row-2][col+2] == piece:
+                    return piece
+                elif row < 4 and col > 0 and self.board[row+1][col-1] == piece:
+                    return piece
         
         #Right
         if col < 4:
-            if self.board[row][col+1] != 0 and self.board[row][col+1].color == piece:
-                if col < 3 and self.board[row][col+2] != 0 and self.board[row][col+2].color == piece:
-                    return True
-                elif col > 0 and self.board[row][col-1] != 0 and self.board[row][col-1].color == piece:
-                    return True
+            if self.board[row][col+1] == piece:
+                if col < 3 and self.board[row][col+2] == piece:
+                    return piece
+                elif col > 0 and self.board[row][col-1] == piece:
+                    return piece
 
-        #BottomLeft
+        #BottomRight
         if row < 4 and col < 4:
-            if self.board[row+1][col+1] != 0 and self.board[row+1][col+1].color == piece:
-                if row < 3 and col < 3 and self.board[row+2][col+2] != 0 and self.board[row+2][col+2].color == piece:
-                    return True
-                elif row > 0 and col > 0 and self.board[row-1][col-1] != 0 and self.board[row-1][col-1].color == piece:
-                    return True
+            if self.board[row+1][col+1] == piece:
+                if row < 3 and col < 3 and self.board[row+2][col+2] == piece:
+                    return piece
+                elif row > 0 and col > 0 and self.board[row-1][col-1] == piece:
+                    return piece
 
         #Bottom
         if row < 4:
-            if self.board[row+1][col] != 0 and self.board[row+1][col].color == piece:
-                if row < 3 and self.board[row+2][col] !=0 and self.board[row+2][col].color == piece:
-                    return True
-                elif row > 0 and self.board[row-1][col] !=0 and self.board[row-1][col].color == piece:
-                    return True
+            if self.board[row+1][col] == piece:
+                if row < 3 and self.board[row+2][col] == piece:
+                    return piece
+                elif row > 0 and self.board[row-1][col] == piece:
+                    return piece
 
-        #BottomRight
+        #BottomLeft
         if row < 4 and col > 0:
-            if self.board[row+1][col-1] != 0 and self.board[row+1][col-1].color == piece:
-                if row < 3 and col > 1 and self.board[row+2][col-2] != 0 and self.board[row+2][col-2].color == piece:
-                    return True
-                elif row > 0 and col < 4 and self.board[row-1][col+1] != 0 and self.board[row-1][col+1].color == piece:
-                    return True
+            if self.board[row+1][col-1] == piece:
+                if row < 3 and col > 1 and self.board[row+2][col-2] == piece:
+                    return piece
+                elif row > 0 and col < 4 and self.board[row-1][col+1] == piece:
+                    return piece
 
 
         #Left
         if col > 0:
-            if self.board[row][col-1] != 0 and self.board[row][col-1].color == piece:
-                if col > 1 and self.board[row][col-2] != 0 and self.board[row][col-2].color == piece:
-                    return True
-                elif col < 4 and self.board[row][col+1] != 0 and self.board[row][col+1].color == piece:
-                    return True
+            if self.board[row][col-1] == piece:
+                if col > 1 and self.board[row][col-2] == piece:
+                    return piece
+                elif col < 4 and self.board[row][col+1] == piece:
+                    return piece
 
-        return False
+        return -1

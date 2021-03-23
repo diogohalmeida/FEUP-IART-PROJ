@@ -1,4 +1,3 @@
-import pygame
 from constants import BLACK, WHITE, SQUARE_SIZE
 
 class Piece:
@@ -18,9 +17,7 @@ class Piece:
         self.x = SQUARE_SIZE * self.col - 10
         self.y = SQUARE_SIZE * self.row - 10
 
-    def draw(self, window):
-       window.blit(self.color, (self.x, self.y))
-        
+    
 
     def move(self, row, col):
         self.row = row

@@ -14,3 +14,5 @@ BLACK_PIECE = pygame.image.load('assets/black.png')
 WHITE_PIECE = pygame.image.load('assets/white.png')
 GRAY_DOT = pygame.image.load('assets/circle.png')
 
+color_dic = {1 : BLACK_PIECE, 2 : WHITE_PIECE}
+
