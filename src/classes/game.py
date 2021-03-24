@@ -104,7 +104,7 @@ class Game:
 
     def max(self, lastRow, lastCol, maxDepth, alpha, beta):
         #print("Entrei no max\n")
-        maxv = -2
+        maxv = -1000
 
         depth = maxDepth - 1
 
@@ -113,21 +113,22 @@ class Game:
         finalOldRow = None
         finalOldCol = None
 
-        if maxDepth == 0:
-            return (0, 0, 0, 0, 0)
 
-
-        if self.board.threeInRow(lastRow, lastCol, 2) == 2:
-            return (1, 0, 0, 0, 0)
+        '''if self.board.threeInRow(lastRow, lastCol, 2) == 2:
+            return (1, 0, 0, 0, 0)'''
 
         if self.board.threeInRow(lastRow, lastCol, 1) == 1:
-            return (-1, 0, 0, 0, 0)
+            return (-1000 - depth, 0, 0, 0, 0)
 
+        if maxDepth == -1:
+            return (0, 0, 0, 0, 0)
 
         pieces = deepcopy(self.board.get_white_pieces())
 
         for piece in pieces:
             oldRow, oldCol = piece
+            '''if oldRow == 3 and oldCol == 2 and depth == 2:
+                print(piece,depth)'''
             possibleMoves = self.board.get_valid_moves(oldRow, oldCol)
             for i in range(0,len(possibleMoves)):
                 moveRow, moveCol = possibleMoves[i]
@@ -157,7 +158,7 @@ class Game:
     def min(self, lastRow, lastCol, maxDepth, alpha, beta):
         #print("Entrei no min\n")
 
-        minv = 2
+        minv = 1000
 
         finalRow = None
         finalCol = None
@@ -166,16 +167,15 @@ class Game:
 
         depth = maxDepth - 1
 
-        if maxDepth == 0:
-            return (0, 0, 0, 0, 0)
 
+        '''if self.board.threeInRow(lastRow, lastCol, 1) == 1:
+            return (-1, 0, 0, 0, 0)'''
 
-        if self.board.threeInRow(lastRow, lastCol, 1) == 1:
-            return (-1, 0, 0, 0, 0)
-
-        elif self.board.threeInRow(lastRow, lastCol, 2) == 2:
-            return (1, 0, 0, 0, 0)
+        if self.board.threeInRow(lastRow, lastCol, 2) == 2:
+            return (1000 + depth, 0, 0, 0, 0)
         
+        if maxDepth == -1:
+            return (0, 0, 0, 0, 0)
 
         pieces = deepcopy(self.board.get_black_pieces())
 
@@ -200,7 +200,7 @@ class Game:
                     return (minv, finalOldRow , finalOldCol ,finalRow, finalCol)
 
                 if minv < beta:
-                    beta = minv 
+                    beta = minv
 
         return (minv, finalOldRow , finalOldCol ,finalRow, finalCol)
 

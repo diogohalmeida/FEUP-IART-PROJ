@@ -38,6 +38,8 @@ class Board:
             self.blackPieces.append((newRow,newCol))
 
         else:
+            '''print(oldRow, oldCol)
+            print("\n")'''
             self.whitePieces.remove((oldRow,oldCol))
             self.whitePieces.append((newRow,newCol))
        
