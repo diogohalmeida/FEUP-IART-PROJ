@@ -258,3 +258,49 @@ class Board:
                     return piece
 
         return -1
+
+
+    def twoInRow(self,row,col,piece):
+        #TopLeft
+        if row > 0 and col > 0:
+            if self.board[row-1][col-1] == piece:
+                return piece
+
+        
+        #Top
+        if row > 0:
+            if self.board[row-1][col] == piece:
+                return piece
+
+        #TopRight
+        if row > 0 and col < 4:
+            if self.board[row-1][col+1] == piece:
+                return piece
+        
+        #Right
+        if col < 4:
+            if self.board[row][col+1] == piece:
+                return piece
+
+        #BottomRight
+        if row < 4 and col < 4:
+            if self.board[row+1][col+1] == piece:
+                return piece
+
+        #Bottom
+        if row < 4:
+            if self.board[row+1][col] == piece:
+                return piece
+
+        #BottomLeft
+        if row < 4 and col > 0:
+            if self.board[row+1][col-1] == piece:
+                return piece
+
+
+        #Left
+        if col > 0:
+            if self.board[row][col-1] == piece:
+                return piece
+
+        return -1
