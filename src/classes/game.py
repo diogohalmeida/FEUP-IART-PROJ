@@ -211,8 +211,8 @@ class Game:
                     minv = m
                     finalRow = moveRow
                     finalCol = moveCol
-                    finaloldRow = oldRow
-                    finaloldCol = oldCol
+                    finalOldRow = oldRow
+                    finalOldCol = oldCol
 
                 self.board.move_piece(moveRow,moveCol, oldRow, oldCol)
 
