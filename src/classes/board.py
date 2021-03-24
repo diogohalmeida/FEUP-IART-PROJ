@@ -23,6 +23,15 @@ class Board:
                 else:
                     self.board[row].append(0)
 
+    def board_as_string(self):
+        result = ""
+        for i in range(0,5):
+            for j in range(0,5):
+                result += str(self.board[i][j])
+
+        return result
+
+
     def get_black_pieces(self):
         return self.blackPieces
 

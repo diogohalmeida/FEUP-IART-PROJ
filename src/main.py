@@ -46,7 +46,7 @@ def main():
 
         if game.getPlayer() == 2:
             row, col = game.getLastMove()
-            (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, 3, -2000, 2000)
+            (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, 2, -2000, 2000)
             game.selected = oldRow, oldCol
             game.ai_move(finalRow, finalCol)
 

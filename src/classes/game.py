@@ -22,6 +22,7 @@ class Game:
         self.player = 1
         self.valid_moves = []
         self.lastMove = None
+        self.boards = {}
 
     def drawBoard(self):
         self.window.fill(WHITE)
@@ -89,6 +90,10 @@ class Game:
     def change_turn(self):
         self.valid_moves = []
         self.player = 3 - self.player
+        if self.board.board_as_string() in self.boards.keys():
+            self.boards[self.board.board_as_string()] += 1
+        else:
+            self.boards.update({self.board.board_as_string() : 1})
 
 
     def draw_valid_moves(self,moves):
@@ -99,6 +104,8 @@ class Game:
     def checkWin(self):
         if self.lastMove == None :
             return -1
+        if self.boards[self.board.board_as_string()] == 3:
+            return 0
         row, col = self.lastMove
         return self.board.threeInRow(row,col, 3-self.player)
 
@@ -117,10 +124,12 @@ class Game:
         '''if self.board.threeInRow(lastRow, lastCol, 2) == 2:
             return (1, 0, 0, 0, 0)'''
 
-        if self.board.threeInRow(lastRow, lastCol, 1) == 1:
+        result = self.board.threeInRow(lastRow, lastCol, 1)
+
+        if result == 1:
             return (-1000 - depth, 0, 0, 0, 0)
 
-        if maxDepth == -1:
+        if maxDepth == -1 or result == 0:
             return (0, 0, 0, 0, 0)
 
         pieces = deepcopy(self.board.get_white_pieces())
@@ -171,10 +180,12 @@ class Game:
         '''if self.board.threeInRow(lastRow, lastCol, 1) == 1:
             return (-1, 0, 0, 0, 0)'''
 
-        if self.board.threeInRow(lastRow, lastCol, 2) == 2:
+        result = self.board.threeInRow(lastRow, lastCol, 2)
+
+        if result == 2:
             return (1000 + depth, 0, 0, 0, 0)
         
-        if maxDepth == -1:
+        if maxDepth == -1 or result == 0:
             return (0, 0, 0, 0, 0)
 
         pieces = deepcopy(self.board.get_black_pieces())
