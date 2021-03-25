@@ -111,7 +111,7 @@ class Game:
 
     def max(self, lastRow, lastCol, maxDepth, alpha, beta):
         #print("Entrei no max\n")
-        maxv = -1000
+        maxv = -2000
 
         depth = maxDepth - 1
 
@@ -129,7 +129,12 @@ class Game:
         if result == 1:
             return (-1000 - depth, 0, 0, 0, 0)
 
-        if maxDepth == -1 or result == 0:
+        if self.board.twoInRow(lastRow, lastCol, 1) == 1 and depth == -1:
+            #print("Entrei no max")
+            return (-100 - depth, 0, 0, 0, 0)
+
+
+        if depth == -1 or result == 0:
             return (0, 0, 0, 0, 0)
 
         pieces = deepcopy(self.board.get_white_pieces())
@@ -167,7 +172,7 @@ class Game:
     def min(self, lastRow, lastCol, maxDepth, alpha, beta):
         #print("Entrei no min\n")
 
-        minv = 1000
+        minv = 2000
 
         finalRow = None
         finalCol = None
@@ -184,8 +189,12 @@ class Game:
 
         if result == 2:
             return (1000 + depth, 0, 0, 0, 0)
-        
-        if maxDepth == -1 or result == 0:
+
+        if self.board.twoInRow(lastRow, lastCol, 2) == 2 and depth == -1:
+            #print("Entrei no min")
+            return (100 + depth, 0, 0, 0, 0)
+
+        if depth == -1 or result == 0:
             return (0, 0, 0, 0, 0)
 
         pieces = deepcopy(self.board.get_black_pieces())
@@ -202,8 +211,8 @@ class Game:
                     minv = m
                     finalRow = moveRow
                     finalCol = moveCol
-                    finaloldRow = oldRow
-                    finaloldCol = oldCol
+                    finalOldRow = oldRow
+                    finalOldCol = oldCol
 
                 self.board.move_piece(moveRow,moveCol, oldRow, oldCol)
 
