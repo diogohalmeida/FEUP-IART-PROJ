@@ -2,7 +2,7 @@ import pygame
 
 WIDTH, HEIGHT = 1200, 800
 ROWS, COLS = 5, 5
-SQUARE_SIZE = WIDTH//COLS
+SQUARE_SIZE = 160
 
 #rgb
 WHITE = (255, 255, 255)

@@ -62,9 +62,66 @@ def set_gamemode(value, gamemode):
 
     menu.add_generic_widget(quit_button)
 
-def start_the_game():
-    # Do the job here !
+
+def plaverVSPlayer():
+    run = True
+    game = Game(WINDOW)
+    
+    while run:
+        #clock.tick(FPS)
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                row, col = get_row_col_from_mouse(pos)
+                game.select(row,col)
+                if game.checkWin() != -1 and game.checkWin() != 0:
+                    run = False
+    
+        game.update()
+
+
+def pcVSPc():
     pass
+
+#Not working properly
+def playerVSPc():
+
+    run = True
+    game = Game(WINDOW)
+    
+    while run:
+        #clock.tick(FPS)
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                row, col = get_row_col_from_mouse(pos)
+                game.select(row,col)
+                if game.checkWin() != -1 and game.checkWin() != 0:
+                    run = False
+                if game.getPlayer() == 1:
+                    game.update()
+                    continue
+
+                if game.getPlayer() == 2:
+                    row, col = game.getLastMove()
+                    (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, 6, -2000, 2000)
+                    game.selected = oldRow, oldCol
+                    game.ai_move(finalRow, finalCol)
+                    if game.checkWin() != -1 and game.checkWin() != 0:
+                        run = False
+    
+        game.update()
+
+
+def start_the_game():
+    #plaverVSPlayer()
+    plaverVSPlayer()
 
 
 def get_row_col_from_mouse(pos):
@@ -77,10 +134,12 @@ def get_row_col_from_mouse(pos):
 
 def main():
     run = True
+
+    menu.mainloop(WINDOW)
     
     #clock = pygame.time.Clock()
     #board = Board()
-    game = Game(WINDOW)
+    '''game = Game(WINDOW)
     
     while run:
         #clock.tick(FPS)
@@ -94,8 +153,8 @@ def main():
                 game.select(row,col)
                 game.update()
                 continue
-                '''if game.checkWin() != -1:
-                    print("Vitória")'''
+                if game.checkWin() != -1:
+                    print("Vitória")
 
         if game.getPlayer() == 2:
             row, col = game.getLastMove()
@@ -104,11 +163,11 @@ def main():
             game.ai_move(finalRow, finalCol)
 
         
-        '''if game.checkWin():
+        if game.checkWin():
             print("Vitória")
-            run = False'''
+            run = False
 
-        game.update()
+        game.update()'''
         
     
     pygame.quit()
