@@ -86,14 +86,49 @@ def plaverVSPlayer():
 
 
 def pcVSPc():
-    pass
+    run = True
+    game = Game(WINDOW)
+    firstMove = True
+
+    
+    while run:
+        #clock.tick(FPS)
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                x, y = pos
+                if x > 800 and game.getPlayer() == 1:
+                    if not firstMove:
+                        row, col = game.getLastMove()
+                    else:
+                        row = 0
+                        col = 0
+                    (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, 6, -2000, 2000, 2)
+                    game.selected = oldRow, oldCol
+                    game.ai_move(finalRow, finalCol)
+                    if game.checkWin() != -1 and game.checkWin() != 0:
+                        run = False
+                
+                elif x > 800 and game.getPlayer() == 2:
+                    row, col = game.getLastMove()
+                    (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, 6, -2000, 2000, 1)
+                    game.selected = oldRow, oldCol
+                    game.ai_move(finalRow, finalCol)
+                    if game.checkWin() != -1 and game.checkWin() != 0:
+                        run = False
+                
+                
+    
+        game.update()
 
 #Not working properly
 def playerVSPc():
 
     run = True
     game = Game(WINDOW)
-    pcTurn = False
 
     
     while run:
@@ -113,7 +148,7 @@ def playerVSPc():
                 
                 elif x > 800 and game.getPlayer() == 2:
                     row, col = game.getLastMove()
-                    (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, 6, -2000, 2000)
+                    (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, 6, -2000, 2000, 1)
                     game.selected = oldRow, oldCol
                     game.ai_move(finalRow, finalCol)
                     if game.checkWin() != -1 and game.checkWin() != 0:
@@ -125,8 +160,9 @@ def playerVSPc():
 
 
 def start_the_game():
-    playerVSPc()
+    #playerVSPc()
     #plaverVSPlayer()
+    pcVSPc()
 
 
 def get_row_col_from_mouse(pos):

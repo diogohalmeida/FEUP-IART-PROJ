@@ -109,7 +109,7 @@ class Game:
         row, col = self.lastMove
         return self.board.threeInRow(row,col, 3-self.player)
 
-    def max(self, lastRow, lastCol, maxDepth, alpha, beta):
+    def max(self, lastRow, lastCol, maxDepth, alpha, beta, player):
         #print("Entrei no max\n")
         maxv = -2000
 
@@ -121,33 +121,31 @@ class Game:
         finalOldCol = None
 
 
-        '''if self.board.threeInRow(lastRow, lastCol, 2) == 2:
-            return (1, 0, 0, 0, 0)'''
+        result = self.board.threeInRow(lastRow, lastCol, player)
 
-        result = self.board.threeInRow(lastRow, lastCol, 1)
-
-        if result == 1:
+        if result == player:
             return (-1000 - depth, 0, 0, 0, 0)
 
-        if self.board.twoInRow(lastRow, lastCol, 1) == 1 and depth == -1:
-            #print("Entrei no max")
+        if self.board.twoInRow(lastRow, lastCol, player) == player and depth == -1:
             return (-100 - depth, 0, 0, 0, 0)
 
 
         if depth == -1 or result == 0:
             return (0, 0, 0, 0, 0)
 
-        pieces = deepcopy(self.board.get_white_pieces())
+        if player == 1:
+            pieces = deepcopy(self.board.get_white_pieces())
+
+        else:
+            pieces = deepcopy(self.board.get_black_pieces())
 
         for piece in pieces:
             oldRow, oldCol = piece
-            '''if oldRow == 3 and oldCol == 2 and depth == 2:
-                print(piece,depth)'''
             possibleMoves = self.board.get_valid_moves(oldRow, oldCol)
             for i in range(0,len(possibleMoves)):
                 moveRow, moveCol = possibleMoves[i]
                 self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
-                (m, min_old_row, min_old_col, min_row, min_col) = self.min(moveRow, moveCol, depth, alpha, beta)
+                (m, min_old_row, min_old_col, min_row, min_col) = self.min(moveRow, moveCol, depth, alpha, beta, 3 - player)
 
                 if m > maxv:
                     maxv = m
@@ -169,8 +167,7 @@ class Game:
         return (maxv, finalOldRow, finalOldCol, finalRow, finalCol)
 
 
-    def min(self, lastRow, lastCol, maxDepth, alpha, beta):
-        #print("Entrei no min\n")
+    def min(self, lastRow, lastCol, maxDepth, alpha, beta, player):
 
         minv = 2000
 
@@ -182,22 +179,23 @@ class Game:
         depth = maxDepth - 1
 
 
-        '''if self.board.threeInRow(lastRow, lastCol, 1) == 1:
-            return (-1, 0, 0, 0, 0)'''
+        result = self.board.threeInRow(lastRow, lastCol, player)
 
-        result = self.board.threeInRow(lastRow, lastCol, 2)
-
-        if result == 2:
+        if result == player:
             return (1000 + depth, 0, 0, 0, 0)
 
-        if self.board.twoInRow(lastRow, lastCol, 2) == 2 and depth == -1:
-            #print("Entrei no min")
+        if self.board.twoInRow(lastRow, lastCol, player) == player and depth == -1:
             return (100 + depth, 0, 0, 0, 0)
 
         if depth == -1 or result == 0:
             return (0, 0, 0, 0, 0)
 
-        pieces = deepcopy(self.board.get_black_pieces())
+
+        if player == 1:
+            pieces = deepcopy(self.board.get_white_pieces())
+
+        else:
+            pieces = deepcopy(self.board.get_black_pieces())
 
         for piece in pieces:
             oldRow, oldCol = piece
@@ -205,7 +203,7 @@ class Game:
             for i in range(0,len(possibleMoves)):
                 moveRow, moveCol = possibleMoves[i]
                 self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
-                (m, max_old_row, max_old_col, max_row, max_col) = self.max(moveRow, moveCol, depth, alpha, beta)
+                (m, max_old_row, max_old_col, max_row, max_col) = self.max(moveRow, moveCol, depth, alpha, beta, 3- player)
 
                 if m < minv:
                     minv = m
