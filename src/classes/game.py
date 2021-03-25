@@ -5,14 +5,17 @@ from copy import deepcopy
 
 class Game:
 
-    def __init__(self,window):
+    def __init__(self,window, gamemode):
         self._init()
         self.window = window
         self.lastMove = None
+        self.winner = None
+        self.gamemode = gamemode
 
 
     def update(self):
         self.drawBoard()
+        self.drawSideBoard()
         self.draw_valid_moves(self.valid_moves)
         pygame.display.update()
 
@@ -25,7 +28,7 @@ class Game:
         self.boards = {}
 
     def drawBoard(self):
-        self.window.fill(WHITE)
+        self.window.fill((76,188,228))
         
         for row in range(ROWS):
             for col in range(COLS):
@@ -38,6 +41,45 @@ class Game:
                 piece = self.board.board[row][col]
                 if piece != 0:
                     self.window.blit(color_dic[piece], (SQUARE_SIZE * col - 10, SQUARE_SIZE * row - 10))
+
+
+    def drawSideBoard(self):
+        if self.player == 1:
+            myfont = pygame.font.SysFont('', 60)
+            sideboard_title = myfont.render('BLACK TURN', True, BLACK)
+            text_rect = sideboard_title.get_rect(center=(1000, 50))
+            self.window.blit(sideboard_title, text_rect)
+        elif self.player == 2:
+            myfont = pygame.font.SysFont('', 60)
+            sideboard_title = myfont.render('WHITE TURN', True, WHITE)
+            text_rect = sideboard_title.get_rect(center=(1000, 50))
+            self.window.blit(sideboard_title, text_rect)
+
+        if self.gamemode == 1:
+            myfont = pygame.font.SysFont('', 40)
+            sideboard_title = myfont.render('Press H to get a Hint', True, (72,68,68))
+            text_rect = sideboard_title.get_rect(center=(1000, 100))
+            self.window.blit(sideboard_title, text_rect)
+
+        if self.winner != None and self.winner != -1:
+            myfont = pygame.font.SysFont('', 60)
+            if self.winner == 1:
+                sideboard_title = myfont.render('BLACK WINS!', True, (0,0,0))
+                text_rect = sideboard_title.get_rect(center=(1000, 700))
+                self.window.blit(sideboard_title, text_rect)
+            elif self.winner == 2:
+                sideboard_title = myfont.render('WHITE WINS!', True, (255,255,255))
+                text_rect = sideboard_title.get_rect(center=(1000, 700))
+                self.window.blit(sideboard_title, text_rect)
+            elif self.winner == 0:
+                sideboard_title = myfont.render('TIE!', True, (72,68,68))
+                text_rect = sideboard_title.get_rect(center=(1000, 650))
+                self.window.blit(sideboard_title, text_rect)
+            
+            myfont = pygame.font.SysFont('', 40)
+            sideboard_title = myfont.render('Press ENTER to continue', True, (72,68,68))
+            text_rect = sideboard_title.get_rect(center=(1000, 750))
+            self.window.blit(sideboard_title, text_rect)
 
     def reset(self):
        self._init()
@@ -105,8 +147,10 @@ class Game:
         if self.lastMove == None :
             return -1
         if self.boards[self.board.board_as_string()] == 3:
-            return 0
+            self.winner = 0
+            return 0   
         row, col = self.lastMove
+        self.winner = self.board.threeInRow(row,col, 3-self.player)  
         return self.board.threeInRow(row,col, 3-self.player)
 
     def max(self, lastRow, lastCol, maxDepth, alpha, beta):
