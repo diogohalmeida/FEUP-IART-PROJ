@@ -15,9 +15,9 @@ FPS = 60
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Neutreeko')
 settings = "pvp"
-diff_pvc = None
-diff_cvc_1 = None
-diff_cvc_2 = None
+diff_pvc = 1
+diff_cvc_1 = 1
+diff_cvc_2 = 1
 mode = 1
 
 
@@ -118,7 +118,7 @@ def pcVSPc():
                     run = False
             if event.type == pygame.QUIT:
                 run = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN and not finished:
                 pos = pygame.mouse.get_pos()
                 x, y = pos
                 if x > 800 and game.getPlayer() == 1:
@@ -127,7 +127,7 @@ def pcVSPc():
                     else:
                         row = 0
                         col = 0
-                    (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, 6, -2000, 2000, 2)
+                    (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, diff_cvc_1, -2000, 2000, 2)
                     game.selected = oldRow, oldCol
                     game.ai_move(finalRow, finalCol)
                     if game.checkWin() != -1:
@@ -135,7 +135,7 @@ def pcVSPc():
                 
                 elif x > 800 and game.getPlayer() == 2:
                     row, col = game.getLastMove()
-                    (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, 6, -2000, 2000, 1)
+                    (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, diff_cvc_2, -2000, 2000, 1)
                     game.selected = oldRow, oldCol
                     game.ai_move(finalRow, finalCol)
                     if game.checkWin() != -1:
@@ -147,7 +147,6 @@ def pcVSPc():
     pass
 
 
-#Not working properly
 def playerVSPc():
     global diff_pvc
     run = True
@@ -158,7 +157,6 @@ def playerVSPc():
 
     
     while run:
-        #clock.tick(FPS)
         
         for event in pygame.event.get():
             if event.type==pygame.KEYDOWN:
@@ -166,10 +164,10 @@ def playerVSPc():
                     run = False
             if event.type == pygame.QUIT:
                 run = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN and not finished:
                 pos = pygame.mouse.get_pos()
                 x, y = pos
-                if x <= 800:
+                if x <= 800 and game.getPlayer() == 1 and not finished:
                     row, col = get_row_col_from_mouse(pos)
                     game.select(row,col)
                     if game.checkWin() != -1:
@@ -177,7 +175,7 @@ def playerVSPc():
                 
                 elif x > 800 and game.getPlayer() == 2:
                     row, col = game.getLastMove()
-                    (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, 6, -2000, 2000, 1)
+                    (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, diff_pvc, -2000, 2000, 1)
                     game.selected = oldRow, oldCol
                     game.ai_move(finalRow, finalCol)
                     if game.checkWin() != -1:
@@ -215,39 +213,6 @@ def main():
 
     menu.mainloop(WINDOW)
     
-    #clock = pygame.time.Clock()
-    #board = Board()
-    '''game = Game(WINDOW)
-    
-    while run:
-        #clock.tick(FPS)
-        
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                pos = pygame.mouse.get_pos()
-                row, col = get_row_col_from_mouse(pos)
-                game.select(row,col)
-                game.update()
-                continue
-                if game.checkWin() != -1:
-                    print("Vitória")
-
-        if game.getPlayer() == 2:
-            row, col = game.getLastMove()
-            (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, 6, -2000, 2000)
-            game.selected = oldRow, oldCol
-            game.ai_move(finalRow, finalCol)
-
-        
-        if game.checkWin():
-            print("Vitória")
-            run = False
-
-        game.update()'''
-        
-    
     pygame.quit()
 
 
@@ -269,9 +234,9 @@ mytheme.widget_padding = 10
 menu = pygame_menu.Menu(HEIGHT, WIDTH, 'NEUTREEKO', theme=mytheme)
 menu.add.button('Play', start_the_game)
 menu.add.selector('Game Mode ', [('Player vs Player', 1), ('Player vs Computer', 2), ('Computer vs Computer', 3)], onchange=set_gamemode)
-difficulty_selector = menu.add.selector('Computer Difficulty :', [('Easy', 1), ('Medium', 2), ('Hard', 3), ('Impossible', 4)], onchange=set_difficulty)
-difficulty_selector_PC1 = menu.add.selector('Computer 1 (Black) Difficulty :', [('Easy', 1), ('Medium', 2), ('Hard', 3), ('Impossible', 4)], onchange=set_difficulty_PC1)
-difficulty_selector_PC2 = menu.add.selector('Computer 2 (White) Difficulty :', [('Easy', 1), ('Medium', 2), ('Hard', 3), ('Impossible', 4)], onchange=set_difficulty_PC2)
+difficulty_selector = menu.add.selector('Computer Difficulty :', [('Easy', 1), ('Medium', 2), ('Hard', 6), ('Impossible', 4)], onchange=set_difficulty)
+difficulty_selector_PC1 = menu.add.selector('Computer 1 (Black) Difficulty :', [('Easy', 1), ('Medium', 2), ('Hard', 6), ('Impossible', 4)], onchange=set_difficulty_PC1)
+difficulty_selector_PC2 = menu.add.selector('Computer 2 (White) Difficulty :', [('Easy', 1), ('Medium', 2), ('Hard', 6), ('Impossible', 4)], onchange=set_difficulty_PC2)
 menu.remove_widget(difficulty_selector)
 menu.remove_widget(difficulty_selector_PC1)
 menu.remove_widget(difficulty_selector_PC2)

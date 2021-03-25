@@ -160,7 +160,8 @@ class Game:
         return self.board.threeInRow(row,col, 3-self.player)
 
     def max(self, lastRow, lastCol, maxDepth, alpha, beta, player):
-        #print("Entrei no max\n")
+
+        print(maxDepth)
         maxv = -2000
 
         depth = maxDepth - 1
