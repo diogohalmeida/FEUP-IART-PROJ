@@ -60,6 +60,12 @@ class Game:
             sideboard_title = myfont.render('Press H to get a Hint', True, (72,68,68))
             text_rect = sideboard_title.get_rect(center=(1000, 100))
             self.window.blit(sideboard_title, text_rect)
+        else:
+            myfont = pygame.font.SysFont('', 40)
+            sideboard_title = myfont.render('Computer Play', True, (72,68,68))
+            text_rect = sideboard_title.get_rect(center=(1000, 100))
+            self.window.blit(sideboard_title, text_rect)
+
 
         if self.winner != None and self.winner != -1:
             myfont = pygame.font.SysFont('', 60)
