@@ -1,5 +1,6 @@
 import pygame
 import pygame_menu
+import time
 from constants import WHITE_PIECE, BLACK_PIECE
 from copy import deepcopy
 import sys
@@ -34,28 +35,35 @@ def set_difficulty_PC2(value, difficulty):
 
 def set_gamemode(value, gamemode):
     global settings
+    global mode
     menu.remove_widget(quit_button)
     if gamemode == 1 and settings == "pvc":
         settings = "pvp"
+        mode = 1
         menu.remove_widget(difficulty_selector)
     elif gamemode == 1 and settings == "cvc":
         settings = "pvp"
+        mode = 1
         menu.remove_widget(difficulty_selector_PC1)
         menu.remove_widget(difficulty_selector_PC2)
     elif gamemode == 2 and settings == "pvp":
+        mode = 2
         settings = "pvc"
         menu.add_generic_widget(difficulty_selector)
     elif gamemode == 2 and settings == "cvc":
         settings = "pvc"
+        mode = 2
         menu.add_generic_widget(difficulty_selector)
         menu.remove_widget(difficulty_selector_PC1)
         menu.remove_widget(difficulty_selector_PC2)
     elif gamemode == 3 and settings == "pvp":
         settings = "cvc"
+        mode = 3
         menu.add_generic_widget(difficulty_selector_PC1)
         menu.add_generic_widget(difficulty_selector_PC2)
     elif  gamemode == 3 and settings == "pvc":
         settings = "cvc"
+        mode = 3
         menu.remove_widget(difficulty_selector)
         menu.add_generic_widget(difficulty_selector_PC1)
         menu.add_generic_widget(difficulty_selector_PC2)
@@ -65,24 +73,31 @@ def set_gamemode(value, gamemode):
 
 def plaverVSPlayer():
     run = True
-    game = Game(WINDOW)
+    finished = False
+    game = Game(WINDOW, 1)
     
     while run:
         #clock.tick(FPS)
         
         for event in pygame.event.get():
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_RETURN and finished:
+                    run = False
             if event.type == pygame.QUIT:
                 run = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN and not finished:
                 pos = pygame.mouse.get_pos()
                 x, y = pos
                 if x <= 800:
                     row, col = get_row_col_from_mouse(pos)
                     game.select(row,col)
-                    if game.checkWin() != -1 and game.checkWin() != 0:
-                        run = False
+                    if game.checkWin() != -1:
+                        finished = True
+                
     
         game.update()
+    
+   
 
 
 def pcVSPc():
@@ -124,17 +139,29 @@ def pcVSPc():
     
         game.update()
 
+    game = Game(WINDOW, 3)
+    pass
+
+
 #Not working properly
 def playerVSPc():
 
     run = True
+
     game = Game(WINDOW)
+
+    game = Game(WINDOW, 2)
+    pcTurn = False
+    finished = False
 
     
     while run:
         #clock.tick(FPS)
         
         for event in pygame.event.get():
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_RETURN and finished:
+                    run = False
             if event.type == pygame.QUIT:
                 run = False
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -152,17 +179,25 @@ def playerVSPc():
                     game.selected = oldRow, oldCol
                     game.ai_move(finalRow, finalCol)
                     if game.checkWin() != -1 and game.checkWin() != 0:
-                        run = False
+                        finished = True
                 
                 
-    
+
         game.update()
 
 
 def start_the_game():
-    #playerVSPc()
-    #plaverVSPlayer()
-    pcVSPc()
+    global diff_pvc
+    global diff_cvc_1
+    global diff_cvc_2
+    global mode
+    
+    if mode == 1:
+        plaverVSPlayer()
+    elif mode == 2:
+        playerVSPc()
+    elif mode == 3:
+        pcVSPc
 
 
 def get_row_col_from_mouse(pos):
