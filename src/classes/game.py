@@ -2,6 +2,7 @@ import pygame
 from constants import *
 from classes.board import Board
 from copy import deepcopy
+import random
 
 class Game:
 
@@ -161,7 +162,6 @@ class Game:
 
     def max(self, lastRow, lastCol, maxDepth, alpha, beta, player):
 
-        print(maxDepth)
         maxv = -2000
 
         depth = maxDepth - 1
@@ -175,13 +175,16 @@ class Game:
         result = self.board.threeInRow(lastRow, lastCol, player)
 
         if result == player:
-            return (-1000 - depth, 0, 0, 0, 0)
+            x = random.randint(0,9)/10
+            print(lastRow, lastCol)
+            return (-1000 - depth - x, 0, 0, 0, 0)
 
         if self.board.twoInRow(lastRow, lastCol, player) == player and depth == -1:
-            return (-100 - depth, 0, 0, 0, 0)
+            x = random.randint(0,9)/10
+            return (-100 - depth - x, 0, 0, 0, 0)
 
 
-        if depth == -1 or result == 0:
+        if depth == -1:
             return (0, 0, 0, 0, 0)
 
         if player == 1:
@@ -233,12 +236,14 @@ class Game:
         result = self.board.threeInRow(lastRow, lastCol, player)
 
         if result == player:
-            return (1000 + depth, 0, 0, 0, 0)
+            x = random.randint(0,9)/10
+            return (1000 + depth + x, 0, 0, 0, 0)
 
         if self.board.twoInRow(lastRow, lastCol, player) == player and depth == -1:
-            return (100 + depth, 0, 0, 0, 0)
+            x = random.randint(0,9)/10
+            return (100 + depth + x, 0, 0, 0, 0)
 
-        if depth == -1 or result == 0:
+        if depth == -1:
             return (0, 0, 0, 0, 0)
 
 

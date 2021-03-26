@@ -125,9 +125,25 @@ def pcVSPc():
                     if not firstMove:
                         row, col = game.getLastMove()
                     else:
+                        print("Entrei")
+                        print(firstMove)
                         row = 0
                         col = 0
+                        firstMove = False
+
                     (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, diff_cvc_1, -2000, 2000, 2)
+                    
+                    print("Player 1")
+                    print("M: " + str(m))
+                    print("Old Row: " + str(oldRow))
+                    print("Old Col: " + str(oldCol))
+                    print("Fnal Row: " + str(finalRow))
+                    print("Final Col: " + str(finalCol) + "\n")
+                    if oldRow == 0 and oldCol == 0 and finalRow == 0 and finalCol == 0:
+                        print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+                        print(game.board.board)
+                        continue
+
                     game.selected = oldRow, oldCol
                     game.ai_move(finalRow, finalCol)
                     if game.checkWin() != -1:
@@ -152,7 +168,6 @@ def playerVSPc():
     run = True
 
     game = Game(WINDOW, 2)
-    pcTurn = False
     finished = False
 
     

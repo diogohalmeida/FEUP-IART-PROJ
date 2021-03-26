@@ -41,14 +41,12 @@ class Board:
 
     def move_piece(self,oldRow, oldCol, newRow, newCol):
         piece = self.board[oldRow][oldCol]
-
+        
         if piece == 1:
             self.blackPieces.remove((oldRow,oldCol))
             self.blackPieces.append((newRow,newCol))
 
         else:
-            '''print(oldRow, oldCol)
-            print("\n")'''
             self.whitePieces.remove((oldRow,oldCol))
             self.whitePieces.append((newRow,newCol))
        
@@ -191,7 +189,7 @@ class Board:
         return moves
 
     def threeInRow(self,row,col,piece):
-
+        
         #TopLeft
         if row > 0 and col > 0:
             if self.board[row-1][col-1] == piece:
