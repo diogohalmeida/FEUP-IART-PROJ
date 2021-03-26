@@ -302,3 +302,63 @@ class Board:
                 return piece
 
         return -1
+
+
+    def twoPiecesClose(self, row, col, piece):
+        
+        #TopLeft
+        if row > 0 and col > 0:
+            if self.board[row-1][col-1] == 0:
+                if row > 1 and col > 1 and self.board[row-2][col-2] == piece:
+                    return piece
+        
+        #Top
+        if row > 0:
+            if self.board[row-1][col] == 0:
+                if row > 1 and self.board[row-2][col] == piece:
+                    return piece
+
+
+        #TopRight
+        if row > 0 and col < 4:
+            if self.board[row-1][col+1] == 0:
+                if row > 1 and col < 3 and self.board[row-2][col+2] == piece:
+                    return piece
+                
+        
+        #Right
+        if col < 4:
+            if self.board[row][col+1] == 0:
+                if col < 3 and self.board[row][col+2] == piece:
+                    return piece
+                
+
+        #BottomRight
+        if row < 4 and col < 4:
+            if self.board[row+1][col+1] == 0:
+                if row < 3 and col < 3 and self.board[row+2][col+2] == piece:
+                    return piece
+                
+
+        #Bottom
+        if row < 4:
+            if self.board[row+1][col] == 0:
+                if row < 3 and self.board[row+2][col] == piece:
+                    return piece
+        
+
+        #BottomLeft
+        if row < 4 and col > 0:
+            if self.board[row+1][col-1] == 0:
+                if row < 3 and col > 1 and self.board[row+2][col-2] == piece:
+                    return piece
+
+
+        #Left
+        if col > 0:
+            if self.board[row][col-1] == 0:
+                if col > 1 and self.board[row][col-2] == piece:
+                    return piece
+
+
+        return -1
