@@ -160,7 +160,7 @@ class Game:
         self.winner = self.board.threeInRow(row,col, 3-self.player)  
         return self.board.threeInRow(row,col, 3-self.player)
 
-    def max(self, lastRow, lastCol, maxDepth, alpha, beta, player):
+    def max_with_alpha_beta_cuts(self, lastRow, lastCol, maxDepth, alpha, beta, player):
 
         maxv = -2000
 
@@ -176,7 +176,6 @@ class Game:
 
         if result == player:
             x = random.randint(0,9)/10
-            print(lastRow, lastCol)
             return (-1000 - depth - x, 0, 0, 0, 0)
 
         if self.board.twoInRow(lastRow, lastCol, player) == player and depth == -1:
@@ -199,7 +198,7 @@ class Game:
             for i in range(0,len(possibleMoves)):
                 moveRow, moveCol = possibleMoves[i]
                 self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
-                (m, min_old_row, min_old_col, min_row, min_col) = self.min(moveRow, moveCol, depth, alpha, beta, 3 - player)
+                (m, min_old_row, min_old_col, min_row, min_col) = self.min_with_alpha_beta_cuts(moveRow, moveCol, depth, alpha, beta, 3 - player)
 
                 if m > maxv:
                     maxv = m
@@ -221,7 +220,7 @@ class Game:
         return (maxv, finalOldRow, finalOldCol, finalRow, finalCol)
 
 
-    def min(self, lastRow, lastCol, maxDepth, alpha, beta, player):
+    def min_with_alpha_beta_cuts(self, lastRow, lastCol, maxDepth, alpha, beta, player):
 
         minv = 2000
 
@@ -259,7 +258,7 @@ class Game:
             for i in range(0,len(possibleMoves)):
                 moveRow, moveCol = possibleMoves[i]
                 self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
-                (m, max_old_row, max_old_col, max_row, max_col) = self.max(moveRow, moveCol, depth, alpha, beta, 3- player)
+                (m, max_old_row, max_old_col, max_row, max_col) = self.max_with_alpha_beta_cuts(moveRow, moveCol, depth, alpha, beta, 3- player)
 
                 if m < minv:
                     minv = m
@@ -278,4 +277,192 @@ class Game:
 
         return (minv, finalOldRow , finalOldCol ,finalRow, finalCol)
 
+
+    def max(self, lastRow, lastCol, maxDepth, player):
+
+        maxv = -2000
+
+        depth = maxDepth - 1
+
+        finalRow = None
+        finalCol = None
+        finalOldRow = None
+        finalOldCol = None
+
+
+        result = self.board.threeInRow(lastRow, lastCol, player)
+
+        if result == player:
+            x = random.randint(0,9)/10
+            return (-1000 - depth - x, 0, 0, 0, 0)
+
+        if self.board.twoInRow(lastRow, lastCol, player) == player and depth == -1:
+            x = random.randint(0,9)/10
+            return (-100 - depth - x, 0, 0, 0, 0)
+
+
+        if depth == -1:
+            return (0, 0, 0, 0, 0)
+
+        if player == 1:
+            pieces = deepcopy(self.board.get_white_pieces())
+
+        else:
+            pieces = deepcopy(self.board.get_black_pieces())
+
+        for piece in pieces:
+            oldRow, oldCol = piece
+            possibleMoves = self.board.get_valid_moves(oldRow, oldCol)
+            for i in range(0,len(possibleMoves)):
+                moveRow, moveCol = possibleMoves[i]
+                self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
+                (m, min_old_row, min_old_col, min_row, min_col) = self.min(moveRow, moveCol, depth, 3 - player)
+
+                if m > maxv:
+                    maxv = m
+                    finalRow = moveRow
+                    finalCol = moveCol
+                    finalOldRow = oldRow
+                    finalOldCol = oldCol
+
+                self.board.move_piece(moveRow,moveCol, oldRow, oldCol)
+                
+
+        return (maxv, finalOldRow, finalOldCol, finalRow, finalCol)
+
                     
+
+    def min(self, lastRow, lastCol, maxDepth, player):
+
+        minv = 2000
+
+        finalRow = None
+        finalCol = None
+        finalOldRow = None
+        finalOldCol = None
+
+        depth = maxDepth - 1
+
+
+        result = self.board.threeInRow(lastRow, lastCol, player)
+
+        if result == player:
+            x = random.randint(0,9)/10
+            return (1000 + depth + x, 0, 0, 0, 0)
+
+        if self.board.twoInRow(lastRow, lastCol, player) == player and depth == -1:
+            x = random.randint(0,9)/10
+            return (100 + depth + x, 0, 0, 0, 0)
+
+        if depth == -1:
+            return (0, 0, 0, 0, 0)
+
+
+        if player == 1:
+            pieces = deepcopy(self.board.get_white_pieces())
+
+        else:
+            pieces = deepcopy(self.board.get_black_pieces())
+
+        for piece in pieces:
+            oldRow, oldCol = piece
+            possibleMoves = self.board.get_valid_moves(oldRow, oldCol)
+            for i in range(0,len(possibleMoves)):
+                moveRow, moveCol = possibleMoves[i]
+                self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
+                (m, max_old_row, max_old_col, max_row, max_col) = self.max_with_alpha_beta_cuts(moveRow, moveCol, depth, 3 - player)
+
+                if m < minv:
+                    minv = m
+                    finalRow = moveRow
+                    finalCol = moveCol
+                    finalOldRow = oldRow
+                    finalOldCol = oldCol
+
+                self.board.move_piece(moveRow,moveCol, oldRow, oldCol)
+
+
+        return (minv, finalOldRow , finalOldCol ,finalRow, finalCol)
+
+    #negamax not working
+    def max_for_negamax(self, lastRow, lastCol, maxDepth, alpha, beta, player, signal):
+        
+        maxv = -2000
+        minv = 2000
+
+        depth = maxDepth - 1
+
+        finalRow = None
+        finalCol = None
+        finalOldRow = None
+        finalOldCol = None
+
+
+        result = self.board.threeInRow(lastRow, lastCol, player)
+
+        if result == player:
+            x = random.randint(0,9)/10
+            return (signal*1000 + signal*depth + signal*x, 0, 0, 0, 0)
+
+        if self.board.twoInRow(lastRow, lastCol, player) == player and depth == -1:
+            x = random.randint(0,9)/10
+            return (signal*100 + signal*depth + signal*x, 0, 0, 0, 0)
+
+
+        if depth == -1:
+            return (0, 0, 0, 0, 0)
+
+        if player == 1:
+            pieces = deepcopy(self.board.get_white_pieces())
+
+        else:
+            pieces = deepcopy(self.board.get_black_pieces())
+
+        for piece in pieces:
+            oldRow, oldCol = piece
+            possibleMoves = self.board.get_valid_moves(oldRow, oldCol)
+            for i in range(0,len(possibleMoves)):
+                moveRow, moveCol = possibleMoves[i]
+                self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
+                (m, min_old_row, min_old_col, min_row, min_col) = self.max_for_negamax(moveRow, moveCol, depth, alpha, beta, 3 - player, -signal)
+
+                if m > maxv and signal > 0:
+                    maxv = m
+                    finalRow = moveRow
+                    finalCol = moveCol
+                    finalOldRow = oldRow
+                    finalOldCol = oldCol
+
+                if m < minv and signal < 0:
+                    minv = m
+                    finalRow = moveRow
+                    finalCol = moveCol
+                    finalOldRow = oldRow
+                    finalOldCol = oldCol
+
+
+                self.board.move_piece(moveRow,moveCol, oldRow, oldCol)
+
+                if maxv >= beta and signal > 0:
+                    return (maxv, finalOldRow, finalOldCol, finalRow, finalCol)
+
+                if maxv > alpha and signal > 0:
+                    alpha = maxv
+
+                if minv <= alpha and signal < 0:
+                    return (minv, finalOldRow , finalOldCol ,finalRow, finalCol)
+
+                if minv < beta and signal < 0:
+                    beta = minv
+            
+        if signal > 0:     
+            return (maxv, finalOldRow, finalOldCol, finalRow, finalCol)
+
+        elif signal < 0:
+            return (minv, finalOldRow, finalOldCol, finalRow, finalCol)
+
+
+
+    def negamax(self, lastRow, lastCol, maxDepth, alpha, beta, player):
+
+        return self.max_for_negamax(lastRow, lastCol, maxDepth, alpha, beta, player, 1)

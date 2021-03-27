@@ -125,24 +125,11 @@ def pcVSPc():
                     if not firstMove:
                         row, col = game.getLastMove()
                     else:
-                        print("Entrei")
-                        print(firstMove)
                         row = 0
                         col = 0
                         firstMove = False
 
-                    (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, diff_cvc_1, -2000, 2000, 2)
-                    
-                    print("Player 1")
-                    print("M: " + str(m))
-                    print("Old Row: " + str(oldRow))
-                    print("Old Col: " + str(oldCol))
-                    print("Fnal Row: " + str(finalRow))
-                    print("Final Col: " + str(finalCol) + "\n")
-                    if oldRow == 0 and oldCol == 0 and finalRow == 0 and finalCol == 0:
-                        print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-                        print(game.board.board)
-                        continue
+                    (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, diff_cvc_1, -2000, 2000, 2)
 
                     game.selected = oldRow, oldCol
                     game.ai_move(finalRow, finalCol)
@@ -151,7 +138,7 @@ def pcVSPc():
                 
                 elif x > 800 and game.getPlayer() == 2:
                     row, col = game.getLastMove()
-                    (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, diff_cvc_2, -2000, 2000, 1)
+                    (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, diff_cvc_2, -2000, 2000, 1)
                     game.selected = oldRow, oldCol
                     game.ai_move(finalRow, finalCol)
                     if game.checkWin() != -1:
@@ -190,7 +177,7 @@ def playerVSPc():
                 
                 elif x > 800 and game.getPlayer() == 2:
                     row, col = game.getLastMove()
-                    (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, diff_pvc, -2000, 2000, 1)
+                    (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, diff_pvc, -2000, 2000, 1)
                     game.selected = oldRow, oldCol
                     game.ai_move(finalRow, finalCol)
                     if game.checkWin() != -1:
