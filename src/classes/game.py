@@ -179,6 +179,12 @@ class Game:
             return (-1000 - depth - x, 0, 0, 0, 0)
 
         if self.board.twoInRow(lastRow, lastCol, player) == player and depth == -1:
+            #print("Entrei no max 2")
+            x = random.randint(0,9)/10
+            return (-200 - depth - x, 0, 0, 0, 0)
+
+        if self.board.twoPiecesClose(lastRow, lastCol, player) == player and depth == -1:
+            #print("Entrei no max 3")
             x = random.randint(0,9)/10
             return (-100 - depth - x, 0, 0, 0, 0)
 
@@ -239,6 +245,12 @@ class Game:
             return (1000 + depth + x, 0, 0, 0, 0)
 
         if self.board.twoInRow(lastRow, lastCol, player) == player and depth == -1:
+            print("Entrei no min 2")
+            x = random.randint(0,9)/10
+            return (200 + depth + x, 0, 0, 0, 0)
+
+        if self.board.twoPiecesClose(lastRow, lastCol, player) == player and depth == -1:
+            print("Entrei no min 3")
             x = random.randint(0,9)/10
             return (100 + depth + x, 0, 0, 0, 0)
 
