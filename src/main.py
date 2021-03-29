@@ -1,6 +1,7 @@
 import pygame
 import pygame_menu
 import time
+import datetime
 from constants import WHITE_PIECE, BLACK_PIECE
 from copy import deepcopy
 import sys
@@ -18,6 +19,9 @@ settings = "pvp"
 diff_pvc = 1
 diff_cvc_1 = 1
 diff_cvc_2 = 1
+algo = 1
+algo_PC1 = 1
+algo_PC2 = 1
 mode = 1
 
 
@@ -33,6 +37,18 @@ def set_difficulty_PC2(value, difficulty):
     global diff_cvc_2
     diff_cvc_2 = difficulty
 
+def set_algorithm(value, algorithm):
+    global algo
+    algo = algorithm
+
+def set_algorithm_PC1(value, algorithm):
+    global algo_PC1
+    algo_PC1 = algorithm
+
+def set_algorithm_PC2(value, algorithm):
+    global algo_PC2 
+    algo_PC2 = algorithm
+
 def set_gamemode(value, gamemode):
     global settings
     global mode
@@ -41,32 +57,44 @@ def set_gamemode(value, gamemode):
         settings = "pvp"
         mode = 1
         menu.remove_widget(difficulty_selector)
+        menu.remove_widget(algorithm_selector)
     elif gamemode == 1 and settings == "cvc":
         settings = "pvp"
         mode = 1
         menu.remove_widget(difficulty_selector_PC1)
         menu.remove_widget(difficulty_selector_PC2)
+        menu.remove_widget(algorithm_selector_PC1)
+        menu.remove_widget(algorithm_selector_PC2)
     elif gamemode == 2 and settings == "pvp":
         mode = 2
         settings = "pvc"
         menu.add_generic_widget(difficulty_selector)
+        menu.add_generic_widget(algorithm_selector)
     elif gamemode == 2 and settings == "cvc":
         settings = "pvc"
         mode = 2
         menu.add_generic_widget(difficulty_selector)
+        menu.add_generic_widget(algorithm_selector)
         menu.remove_widget(difficulty_selector_PC1)
         menu.remove_widget(difficulty_selector_PC2)
+        menu.remove_widget(algorithm_selector_PC1)
+        menu.remove_widget(algorithm_selector_PC2)
     elif gamemode == 3 and settings == "pvp":
         settings = "cvc"
         mode = 3
         menu.add_generic_widget(difficulty_selector_PC1)
         menu.add_generic_widget(difficulty_selector_PC2)
+        menu.add_generic_widget(algorithm_selector_PC1)
+        menu.add_generic_widget(algorithm_selector_PC2)
     elif  gamemode == 3 and settings == "pvc":
         settings = "cvc"
         mode = 3
         menu.remove_widget(difficulty_selector)
+        menu.remove_widget(algorithm_selector)
         menu.add_generic_widget(difficulty_selector_PC1)
         menu.add_generic_widget(difficulty_selector_PC2)
+        menu.add_generic_widget(algorithm_selector_PC1)
+        menu.add_generic_widget(algorithm_selector_PC2)
 
     menu.add_generic_widget(quit_button)
 
@@ -75,7 +103,8 @@ def plaverVSPlayer():
     run = True
     finished = False
     game = Game(WINDOW, 1)
-    
+    time_elapsed = None
+
     while run:
         #clock.tick(FPS)
         
@@ -93,9 +122,12 @@ def plaverVSPlayer():
                     game.select(row,col)
                     if game.checkWin() != -1:
                         finished = True
+                elif game.button.isOver(pos):
+                    #Hint for Player vs Player
+                    pass
                 
     
-        game.update()
+        game.update(time_elapsed)
     
    
 
@@ -107,7 +139,7 @@ def pcVSPc():
     game = Game(WINDOW, 3)
     firstMove = True
     finished = False
-
+    time_elapsed = None
     
     while run:
         #clock.tick(FPS)
@@ -121,7 +153,7 @@ def pcVSPc():
             if event.type == pygame.MOUSEBUTTONDOWN and not finished:
                 pos = pygame.mouse.get_pos()
                 x, y = pos
-                if x > 800 and game.getPlayer() == 1:
+                if game.button.isOver(pos) and game.getPlayer() == 1:   
                     if not firstMove:
                         row, col = game.getLastMove()
                     else:
@@ -129,16 +161,26 @@ def pcVSPc():
                         col = 0
                         firstMove = False
 
+                    start_time = time.time()
                     (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, diff_cvc_1, -2000, 2000, 2)
+                    end_time = time.time()
+                    time_elapsed = end_time-start_time
+                    print("Elapsed time: ", time_elapsed)
 
                     game.selected = oldRow, oldCol
                     game.ai_move(finalRow, finalCol)
                     if game.checkWin() != -1:
                         finished = True
                 
-                elif x > 800 and game.getPlayer() == 2:
+                elif game.button.isOver(pos) and game.getPlayer() == 2:
                     row, col = game.getLastMove()
+                    
+                    start_time = time.time()
                     (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, diff_cvc_2, -2000, 2000, 1)
+                    end_time = time.time()
+                    time_elapsed = end_time-start_time
+                    print("Elapsed time: ", time_elapsed)
+                    
                     game.selected = oldRow, oldCol
                     game.ai_move(finalRow, finalCol)
                     if game.checkWin() != -1:
@@ -146,7 +188,7 @@ def pcVSPc():
                 
                 
     
-        game.update()
+        game.update(time_elapsed)
     pass
 
 
@@ -156,7 +198,7 @@ def playerVSPc():
 
     game = Game(WINDOW, 2)
     finished = False
-
+    time_elapsed = None
     
     while run:
         
@@ -174,10 +216,19 @@ def playerVSPc():
                     game.select(row,col)
                     if game.checkWin() != -1:
                         finished = True
+                elif game.button.isOver(pos) and game.getPlayer() == 1:
+                    #Hint for Player vs PC
+                    pass
                 
-                elif x > 800 and game.getPlayer() == 2:
+                elif game.button.isOver(pos) and game.getPlayer() == 2:
                     row, col = game.getLastMove()
+                    
+                    start_time = time.time()
                     (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, diff_pvc, -2000, 2000, 1)
+                    end_time = time.time()
+                    time_elapsed = end_time-start_time
+                    print("Elapsed time: ", time_elapsed)
+                    
                     game.selected = oldRow, oldCol
                     game.ai_move(finalRow, finalCol)
                     if game.checkWin() != -1:
@@ -185,7 +236,7 @@ def playerVSPc():
                 
                 
 
-        game.update()
+        game.update(time_elapsed)
 
 
 def start_the_game():
@@ -236,12 +287,18 @@ mytheme.widget_padding = 10
 menu = pygame_menu.Menu(HEIGHT, WIDTH, 'NEUTREEKO', theme=mytheme)
 menu.add.button('Play', start_the_game)
 menu.add.selector('Game Mode ', [('Player vs Player', 1), ('Player vs Computer', 2), ('Computer vs Computer', 3)], onchange=set_gamemode)
-difficulty_selector = menu.add.selector('Computer Difficulty :', [('Easy', 1), ('Medium', 2), ('Hard', 6), ('Impossible', 4)], onchange=set_difficulty)
-difficulty_selector_PC1 = menu.add.selector('Computer 1 (Black) Difficulty :', [('Easy', 1), ('Medium', 2), ('Hard', 6), ('Impossible', 4)], onchange=set_difficulty_PC1)
-difficulty_selector_PC2 = menu.add.selector('Computer 2 (White) Difficulty :', [('Easy', 1), ('Medium', 2), ('Hard', 6), ('Impossible', 4)], onchange=set_difficulty_PC2)
+difficulty_selector = menu.add.selector('Computer Difficulty ', [('Easy', 1), ('Medium', 2), ('Hard', 6), ('Impossible', 4)], onchange=set_difficulty)
+difficulty_selector_PC1 = menu.add.selector('Computer 1 (Black) Difficulty ', [('Easy', 1), ('Medium', 2), ('Hard', 6), ('Impossible', 4)], onchange=set_difficulty_PC1)
+difficulty_selector_PC2 = menu.add.selector('Computer 2 (White) Difficulty ', [('Easy', 1), ('Medium', 2), ('Hard', 6), ('Impossible', 4)], onchange=set_difficulty_PC2)
+algorithm_selector = menu.add.selector('Algorithm ', [('Minimax', 1), ('Minimax w/ Alpha/Beta Cuts', 2), ('Negamax', 3)], onchange=set_algorithm)
+algorithm_selector_PC1 = menu.add.selector('Algo. Comp. 1 ', [('Minimax', 1), ('Minimax w/ Alpha/Beta Cuts', 2), ('Negamax', 3)], onchange=set_algorithm_PC1)
+algorithm_selector_PC2 = menu.add.selector('Algo. Comp. 2 ', [('Minimax', 1), ('Minimax w/ Alpha/Beta Cuts', 2), ('Negamax', 3)], onchange=set_algorithm_PC2)
 menu.remove_widget(difficulty_selector)
 menu.remove_widget(difficulty_selector_PC1)
 menu.remove_widget(difficulty_selector_PC2)
+menu.remove_widget(algorithm_selector)
+menu.remove_widget(algorithm_selector_PC1)
+menu.remove_widget(algorithm_selector_PC2)
 quit_button = menu.add.button('Quit', pygame_menu.events.EXIT)
 
 

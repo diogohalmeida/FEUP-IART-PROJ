@@ -1,6 +1,7 @@
 import pygame
 from constants import *
 from classes.board import Board
+from classes.button import Button
 from copy import deepcopy
 import random
 
@@ -12,9 +13,14 @@ class Game:
         self.lastMove = None
         self.winner = None
         self.gamemode = gamemode
+        self.button = None
+        self.time = None
 
 
-    def update(self):
+    def update(self, time_elapsed):
+        if time_elapsed != None:
+            self.time = time_elapsed
+        
         self.drawBoard()
         self.drawSideBoard()
         self.draw_valid_moves(self.valid_moves)
@@ -56,17 +62,20 @@ class Game:
             text_rect = sideboard_title.get_rect(center=(1000, 50))
             self.window.blit(sideboard_title, text_rect)
 
-        if self.gamemode == 1:
-            myfont = pygame.font.SysFont('', 40)
-            sideboard_title = myfont.render('Press H to get a Hint', True, (72,68,68))
-            text_rect = sideboard_title.get_rect(center=(1000, 100))
-            self.window.blit(sideboard_title, text_rect)
-        else:
-            myfont = pygame.font.SysFont('', 40)
-            sideboard_title = myfont.render('Computer Play', True, (72,68,68))
-            text_rect = sideboard_title.get_rect(center=(1000, 100))
-            self.window.blit(sideboard_title, text_rect)
+        if self.gamemode == 1 or (self.gamemode == 2 and self.player == 1):
+            self.button = Button(BLUE, 850, 150, 300, 100, 'Press for a hint')
+            self.button.draw(self.window, True)
+        elif self.gamemode == 3 or (self.gamemode == 2 and self.player == 2):
+            self.button = Button(BLUE, 825, 150, 350, 100, 'Press for computer play')
+            self.button.draw(self.window, True)
+            
 
+
+        if self.gamemode != 1 and self.time != None:
+            myfont = pygame.font.SysFont('', 40)
+            sideboard_title = myfont.render("AI Move took: " + str(round(self.time,3)) + " s", True, BLACK)
+            text_rect = sideboard_title.get_rect(center=(1000, 300))
+            self.window.blit(sideboard_title, text_rect)
 
         if self.winner != None and self.winner != -1:
             myfont = pygame.font.SysFont('', 60)
