@@ -8,13 +8,13 @@ SQUARE_SIZE = 160
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 BLUE = (135, 206, 235)
-RED = (169, 254, 169)
+GREEN = (169, 254, 169)
 
 #images
 BLACK_PIECE = pygame.image.load('assets/black.png')
 WHITE_PIECE = pygame.image.load('assets/white.png')
 GRAY_DOT = pygame.image.load('assets/circle.png')
-RED_DOT = pygame.image.load('assets/red_circle.png')
+GREEN_DOT = pygame.image.load('assets/green_circle.png')
 
 color_dic = {1 : BLACK_PIECE, 2 : WHITE_PIECE}
 

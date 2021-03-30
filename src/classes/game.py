@@ -42,7 +42,7 @@ class Game:
         for row in range(ROWS):
             for col in range(COLS):
                 if (col, row) == self.hintSquarePiece:
-                    pygame.draw.rect(self.window, RED, (row*SQUARE_SIZE,col*SQUARE_SIZE,SQUARE_SIZE,SQUARE_SIZE), 0)
+                    pygame.draw.rect(self.window, GREEN, (row*SQUARE_SIZE,col*SQUARE_SIZE,SQUARE_SIZE,SQUARE_SIZE), 0)
                 else:
                     pygame.draw.rect(self.window, BLUE, (row*SQUARE_SIZE,col*SQUARE_SIZE,SQUARE_SIZE,SQUARE_SIZE), 0)
 
@@ -166,7 +166,7 @@ class Game:
         for move in moves:
             row, col = move
             if (row, col) == self.hintSquareToMove:
-                self.window.blit(RED_DOT,(SQUARE_SIZE*col+66,SQUARE_SIZE*row+66))
+                self.window.blit(GREEN_DOT,(SQUARE_SIZE*col+66,SQUARE_SIZE*row+66))
             else:
                 self.window.blit(GRAY_DOT,(SQUARE_SIZE*col+66,SQUARE_SIZE*row+66))
 
