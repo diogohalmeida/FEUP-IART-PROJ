@@ -226,7 +226,7 @@ class Game:
             return 0
 
 
-    def max_with_alpha_beta_cuts(self, lastRow, lastCol, maxDepth, alpha, beta, player):
+    def max_with_alpha_beta_cuts(self, lastRow, lastCol, maxDepth, alpha, beta, player, ordering):
 
         maxv = -2000
 
@@ -267,21 +267,31 @@ class Game:
             oldRow, oldCol = piece
             possibleMoves = self.board.get_valid_moves(oldRow, oldCol)
             orderedMoves = []
-            for i in range(0, len(possibleMoves)):
-                moveRow, moveCol = possibleMoves[i]
-                self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
 
-                orderedMoves.append((moveRow, moveCol, self.heuristics(moveRow, moveCol, player)))
+            if ordering != None:
+                for i in range(0, len(possibleMoves)):
+                    moveRow, moveCol = possibleMoves[i]
+                    self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
 
-                self.board.move_piece(moveRow,moveCol, oldRow, oldCol)
+                    orderedMoves.append((moveRow, moveCol, self.heuristics(moveRow, moveCol, player)))
 
-            orderedMoves = sorted(orderedMoves, key = lambda x: x[2], reverse=True) 
+                    self.board.move_piece(moveRow,moveCol, oldRow, oldCol)
+
+                orderedMoves = sorted(orderedMoves, key = lambda x: x[2], reverse=ordering)
+
+            else:               
+                orderedMoves = possibleMoves
 
 
             for i in range(0,len(orderedMoves)):
-                moveRow, moveCol, score = orderedMoves[i]
+
+                if ordering != None:
+                    moveRow, moveCol, score = orderedMoves[i]
+                else:
+                    moveRow, moveCol = orderedMoves[i]
+
                 self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
-                (m, min_old_row, min_old_col, min_row, min_col) = self.min_with_alpha_beta_cuts(moveRow, moveCol, depth, alpha, beta, opponent)
+                (m, min_old_row, min_old_col, min_row, min_col) = self.min_with_alpha_beta_cuts(moveRow, moveCol, depth, alpha, beta, opponent, ordering)
 
                 if m > maxv:
                     maxv = m
@@ -328,7 +338,7 @@ class Game:
         return (maxv, finalOldRow, finalOldCol, finalRow, finalCol)
 
 
-    def min_with_alpha_beta_cuts(self, lastRow, lastCol, maxDepth, alpha, beta, player):
+    def min_with_alpha_beta_cuts(self, lastRow, lastCol, maxDepth, alpha, beta, player, ordering):
 
         minv = 2000
 
@@ -372,21 +382,31 @@ class Game:
             oldRow, oldCol = piece
             possibleMoves = self.board.get_valid_moves(oldRow, oldCol)
             orderedMoves = []
-            for i in range(0, len(possibleMoves)):
-                moveRow, moveCol = possibleMoves[i]
-                self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
 
-                orderedMoves.append((moveRow, moveCol, self.heuristics(moveRow, moveCol, player)))
+            if ordering != None:
+                for i in range(0, len(possibleMoves)):
+                    moveRow, moveCol = possibleMoves[i]
+                    self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
 
-                self.board.move_piece(moveRow,moveCol, oldRow, oldCol)
+                    orderedMoves.append((moveRow, moveCol, self.heuristics(moveRow, moveCol, player)))
 
-            orderedMoves = sorted(orderedMoves, key = lambda x: x[2], reverse=True)
+                    self.board.move_piece(moveRow,moveCol, oldRow, oldCol)
+
+                orderedMoves = sorted(orderedMoves, key = lambda x: x[2], reverse=ordering)
+
+            else:               
+                orderedMoves = possibleMoves
 
         
             for i in range(0,len(orderedMoves)):
-                moveRow, moveCol, score = orderedMoves[i]
+
+                if ordering != None:
+                    moveRow, moveCol, score = orderedMoves[i]
+                else:
+                    moveRow, moveCol = orderedMoves[i]
+
                 self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
-                (m, max_old_row, max_old_col, max_row, max_col) = self.max_with_alpha_beta_cuts(moveRow, moveCol, depth, alpha, beta, opponent)
+                (m, max_old_row, max_old_col, max_row, max_col) = self.max_with_alpha_beta_cuts(moveRow, moveCol, depth, alpha, beta, opponent, ordering)
 
                 if m < minv:
                     minv = m
@@ -429,7 +449,7 @@ class Game:
         return (minv, finalOldRow , finalOldCol ,finalRow, finalCol)
 
 
-    def max(self, lastRow, lastCol, maxDepth, player):
+    def max(self, lastRow, lastCol, maxDepth, player, ordering):
 
         maxv = -2000
 
@@ -471,21 +491,31 @@ class Game:
             oldRow, oldCol = piece
             possibleMoves = self.board.get_valid_moves(oldRow, oldCol)
             orderedMoves = []
-            for i in range(0, len(possibleMoves)):
-                moveRow, moveCol = possibleMoves[i]
-                self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
 
-                orderedMoves.append((moveRow, moveCol, self.heuristics(moveRow, moveCol, player)))
+            if ordering != None:
+                for i in range(0, len(possibleMoves)):
+                    moveRow, moveCol = possibleMoves[i]
+                    self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
 
-                self.board.move_piece(moveRow,moveCol, oldRow, oldCol)
+                    orderedMoves.append((moveRow, moveCol, self.heuristics(moveRow, moveCol, player)))
 
-            orderedMoves = sorted(orderedMoves, key = lambda x: x[2], reverse=True) 
+                    self.board.move_piece(moveRow,moveCol, oldRow, oldCol)
+
+                orderedMoves = sorted(orderedMoves, key = lambda x: x[2], reverse=ordering)
+
+            else:               
+                orderedMoves = possibleMoves 
 
 
             for i in range(0,len(orderedMoves)):
-                moveRow, moveCol, score = orderedMoves[i]
+
+                if ordering != None:
+                    moveRow, moveCol, score = orderedMoves[i]
+                else:
+                    moveRow, moveCol = orderedMoves[i]
+
                 self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
-                (m, min_old_row, min_old_col, min_row, min_col) = self.min(moveRow, moveCol, depth, opponent)
+                (m, min_old_row, min_old_col, min_row, min_col) = self.min(moveRow, moveCol, depth, opponent, ordering)
 
                 if m > maxv:
                     maxv = m
@@ -501,7 +531,7 @@ class Game:
 
                     
 
-    def min(self, lastRow, lastCol, maxDepth, player):
+    def min(self, lastRow, lastCol, maxDepth, player, ordering):
 
         minv = 2000
 
@@ -543,21 +573,31 @@ class Game:
             oldRow, oldCol = piece
             possibleMoves = self.board.get_valid_moves(oldRow, oldCol)
             orderedMoves = []
-            for i in range(0, len(possibleMoves)):
-                moveRow, moveCol = possibleMoves[i]
-                self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
 
-                orderedMoves.append((moveRow, moveCol, self.heuristics(moveRow, moveCol, player)))
+            if ordering != None:
+                for i in range(0, len(possibleMoves)):
+                    moveRow, moveCol = possibleMoves[i]
+                    self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
 
-                self.board.move_piece(moveRow,moveCol, oldRow, oldCol)
+                    orderedMoves.append((moveRow, moveCol, self.heuristics(moveRow, moveCol, player)))
 
-            orderedMoves = sorted(orderedMoves, key = lambda x: x[2], reverse=True)
+                    self.board.move_piece(moveRow,moveCol, oldRow, oldCol)
+
+                orderedMoves = sorted(orderedMoves, key = lambda x: x[2], reverse=ordering)
+
+            else:               
+                orderedMoves = possibleMoves
 
         
             for i in range(0,len(orderedMoves)):
-                moveRow, moveCol, score = orderedMoves[i]
+                
+                if ordering != None:
+                    moveRow, moveCol, score = orderedMoves[i]
+                else:
+                    moveRow, moveCol = orderedMoves[i]
+
                 self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
-                (m, max_old_row, max_old_col, max_row, max_col) = self.max(moveRow, moveCol, depth, opponent)
+                (m, max_old_row, max_old_col, max_row, max_col) = self.max(moveRow, moveCol, depth, opponent, ordering)
 
                 if m < minv:
                     minv = m

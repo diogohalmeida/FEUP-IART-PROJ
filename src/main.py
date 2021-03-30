@@ -160,7 +160,7 @@ def plaverVSPlayer():
                         col = 0
                         firstMove = False
 
-                    (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, 6, -2000, 2000, game.getPlayer())
+                    (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, 6, -2000, 2000, game.getPlayer(), True)
 
                     game.hintSquarePiece = (oldRow, oldCol)
                     game.hintSquareToMove = (finalRow, finalCol)
@@ -176,6 +176,9 @@ def pcVSPc():
     global diff_cvc_2
     global algo_PC1
     global algo_PC2
+    global order_PC1
+    global order_PC2
+
     run = True
     game = Game(WINDOW, 3)
     firstMove = True
@@ -204,12 +207,12 @@ def pcVSPc():
 
                     if algo_PC1 == 1:
                         start_time = time.time()
-                        (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, diff_cvc_1, game.getPlayer())
+                        (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, diff_cvc_1, game.getPlayer(), order_PC1)
                         end_time = time.time()
 
                     elif algo_PC1 == 2:
                         start_time = time.time()
-                        (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, diff_cvc_1, -2000, 2000, game.getPlayer())
+                        (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, diff_cvc_1, -2000, 2000, game.getPlayer(), order_PC1)
                         end_time = time.time()
 
                     time_elapsed = end_time-start_time
@@ -225,12 +228,12 @@ def pcVSPc():
                     
                     if algo_PC2 == 1:
                         start_time = time.time()
-                        (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, diff_cvc_2, game.getPlayer())
+                        (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, diff_cvc_2, game.getPlayer(), order_PC2)
                         end_time = time.time()
 
                     elif algo_PC2 == 2:
                         start_time = time.time()
-                        (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, diff_cvc_2, -2000, 2000, game.getPlayer())
+                        (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, diff_cvc_2, -2000, 2000, game.getPlayer(), order_PC2)
                         end_time = time.time()
 
 
@@ -249,6 +252,7 @@ def pcVSPc():
 
 def playerVSPc():
     global diff_pvc
+    global order
     run = True
 
     game = Game(WINDOW, 2)
@@ -281,7 +285,7 @@ def playerVSPc():
                         col = 0
                         firstMove = False
 
-                    (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, 6, -2000, 2000, game.getPlayer())
+                    (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, 6, -2000, 2000, game.getPlayer(), True)
                     
                     game.hintSquarePiece = (oldRow, oldCol)
                     game.hintSquareToMove = (finalRow, finalCol)
@@ -289,14 +293,14 @@ def playerVSPc():
                 elif game.button.isOver(pos) and game.getPlayer() == 2:
                     row, col = game.getLastMove()
                     
-                    if algo_PC2 == 1:
+                    if algo == 1:
                         start_time = time.time()
-                        (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, diff_pvc, game.getPlayer())
+                        (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, diff_pvc, game.getPlayer(), order)
                         end_time = time.time()
 
-                    elif algo_PC2 == 2:
+                    elif algo == 2:
                         start_time = time.time()
-                        (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, diff_pvc, -2000, 2000, game.getPlayer())
+                        (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, diff_pvc, -2000, 2000, game.getPlayer(), order)
                         end_time = time.time()
 
                     time_elapsed = end_time-start_time
