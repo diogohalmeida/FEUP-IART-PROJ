@@ -202,7 +202,6 @@ def pcVSPc():
         game.update(time_elapsed)
     
 
-
 def playerVSPc():
     global diff_pvc
     run = True
@@ -238,7 +237,7 @@ def playerVSPc():
                         firstMove = False
 
                     (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, 6, -2000, 2000, 2)
-
+                    
                     game.hintSquarePiece = (oldRow, oldCol)
                     game.hintSquareToMove = (finalRow, finalCol)
                 

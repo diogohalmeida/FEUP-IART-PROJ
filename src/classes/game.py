@@ -165,7 +165,7 @@ class Game:
     def draw_valid_moves(self,moves):
         for move in moves:
             row, col = move
-            if (col, row) == self.hintSquareToMove:
+            if (row, col) == self.hintSquareToMove:
                 self.window.blit(RED_DOT,(SQUARE_SIZE*col+66,SQUARE_SIZE*row+66))
             else:
                 self.window.blit(GRAY_DOT,(SQUARE_SIZE*col+66,SQUARE_SIZE*row+66))
@@ -181,6 +181,36 @@ class Game:
         return self.board.threeInRow(row,col, 3-self.player)
 
     
+    def easyLevelHeuristics(self, row, col, player):
+        if self.board.threeInRow(row, col, player) == player:
+            return 1000
+
+        else:
+            return 0
+
+    def mediumLevelHeuristics(self, row, col, player):
+        if self.board.threeInRow(row, col, player) == player:
+            return 1000
+
+        elif self.board.twoInRow(row, col, player) == player:
+            return 200
+
+        else:
+            return 0
+
+    def hardLevelHeuristics(self, row, col, player):
+        if self.board.threeInRow(row, col, player) == player:
+            return 1000
+
+        elif self.board.twoInRow(row, col, player) == player:
+            return 200
+
+        elif self.board.twoPiecesClose(row, col, player) == player:
+            return 100
+
+        else:
+            return 0
+
     def heuristics(self, row, col, player):
 
         if self.board.threeInRow(row, col, player) == player:
@@ -208,21 +238,22 @@ class Game:
         finalOldCol = None
 
 
-        result = self.board.threeInRow(lastRow, lastCol, player)
+        result = self.heuristics(lastRow, lastCol, player)
         x = random.randint(0,9)/10
 
-        if result == player:
-            return (-1000 - depth - x, 0, 0, 0, 0)
+        if result == 1000:
+            return (-result - depth - x, 0, 0, 0, 0)
 
-        if self.board.twoInRow(lastRow, lastCol, player) == player and depth == -1:
+        elif result != 1000 and depth == -1:
+            return (-result - depth - x, 0, 0, 0, 0)
+        '''if self.board.twoInRow(lastRow, lastCol, player) == player and depth == -1:
             return (-200 - depth - x, 0, 0, 0, 0)
 
         if self.board.twoPiecesClose(lastRow, lastCol, player) == player and depth == -1:
             return (-100 - depth - x, 0, 0, 0, 0)
 
-
         if depth == -1:
-            return (0, 0, 0, 0, 0)
+            return (0, 0, 0, 0, 0)'''
 
         if player == 1:
             pieces = deepcopy(self.board.get_white_pieces())
@@ -308,20 +339,23 @@ class Game:
         depth = maxDepth - 1
 
 
-        result = self.board.threeInRow(lastRow, lastCol, player)
+        result = self.heuristics(lastRow, lastCol, player)
         x = random.randint(0,9)/10
 
-        if result == player:
-            return (1000 + depth + x, 0, 0, 0, 0)
+        if result == 1000:
+            return (result + depth + x, 0, 0, 0, 0)
 
-        if self.board.twoInRow(lastRow, lastCol, player) == player and depth == -1:
+        elif result != 1000 and depth == -1:
+            return (result + depth + x, 0, 0, 0, 0)
+
+        '''if self.board.twoInRow(lastRow, lastCol, player) == player and depth == -1:
             return (200 + depth + x, 0, 0, 0, 0)
 
         if self.board.twoPiecesClose(lastRow, lastCol, player) == player and depth == -1:
             return (100 + depth + x, 0, 0, 0, 0)
 
         if depth == -1:
-            return (0, 0, 0, 0, 0)
+            return (0, 0, 0, 0, 0)'''
 
 
         if player == 1:
@@ -405,10 +439,16 @@ class Game:
         finalOldCol = None
 
 
-        result = self.board.threeInRow(lastRow, lastCol, player)
+        result = self.heuristics(lastRow, lastCol, player)
         x = random.randint(0,9)/10
 
-        if result == player:
+        if result == 1000:
+            return (-result - depth - x, 0, 0, 0, 0)
+
+        elif result != 1000 and depth == -1:
+            return (-result - depth - x, 0, 0, 0, 0)
+
+        '''if result == player:
             return (-1000 - depth - x, 0, 0, 0, 0)
 
         if self.board.twoInRow(lastRow, lastCol, player) == player and depth == -1:
@@ -416,7 +456,7 @@ class Game:
 
 
         if depth == -1:
-            return (0, 0, 0, 0, 0)
+            return (0, 0, 0, 0, 0)'''
 
         if player == 1:
             pieces = deepcopy(self.board.get_white_pieces())
@@ -470,17 +510,23 @@ class Game:
         depth = maxDepth - 1
 
 
-        result = self.board.threeInRow(lastRow, lastCol, player)
+        result = self.heuristics(lastRow, lastCol, player)
         x = random.randint(0,9)/10
 
-        if result == player:
+        if result == 1000:
+            return (result + depth + x, 0, 0, 0, 0)
+
+        elif result != 1000 and depth == -1:
+            return (result + depth + x, 0, 0, 0, 0)
+
+        '''if result == player:
             return (1000 + depth + x, 0, 0, 0, 0)
 
         if self.board.twoInRow(lastRow, lastCol, player) == player and depth == -1:
             return (100 + depth + x, 0, 0, 0, 0)
 
         if depth == -1:
-            return (0, 0, 0, 0, 0)
+            return (0, 0, 0, 0, 0)'''
 
 
         if player == 1:

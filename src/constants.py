@@ -8,7 +8,7 @@ SQUARE_SIZE = 160
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 BLUE = (135, 206, 235)
-RED = (255, 0, 0)
+RED = (169, 254, 169)
 
 #images
 BLACK_PIECE = pygame.image.load('assets/black.png')
