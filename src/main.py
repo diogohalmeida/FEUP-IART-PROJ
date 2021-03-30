@@ -23,6 +23,9 @@ algo = 1
 algo_PC1 = 1
 algo_PC2 = 1
 mode = 1
+order = True
+order_PC1 = True
+order_PC2 = True
 
 
 def set_difficulty(value, difficulty):
@@ -49,6 +52,19 @@ def set_algorithm_PC2(value, algorithm):
     global algo_PC2 
     algo_PC2 = algorithm
 
+def set_ordering(value, ordering):
+    global order
+    order = ordering
+
+def set_ordering_PC1(value, ordering):
+    global order_PC1
+    order_PC1 = ordering
+
+def set_ordering_PC2(value, ordering):
+    global order_PC2
+    order_PC2 = ordering
+
+
 def set_gamemode(value, gamemode):
     global settings
     global mode
@@ -58,6 +74,7 @@ def set_gamemode(value, gamemode):
         mode = 1
         menu.remove_widget(difficulty_selector)
         menu.remove_widget(algorithm_selector)
+        menu.remove_widget(ordering_selector)
     elif gamemode == 1 and settings == "cvc":
         settings = "pvp"
         mode = 1
@@ -65,20 +82,26 @@ def set_gamemode(value, gamemode):
         menu.remove_widget(difficulty_selector_PC2)
         menu.remove_widget(algorithm_selector_PC1)
         menu.remove_widget(algorithm_selector_PC2)
+        menu.remove_widget(ordering_selector_PC1)
+        menu.remove_widget(ordering_selector_PC2)
     elif gamemode == 2 and settings == "pvp":
         mode = 2
         settings = "pvc"
         menu.add_generic_widget(difficulty_selector)
         menu.add_generic_widget(algorithm_selector)
+        menu.add_generic_widget(ordering_selector)
     elif gamemode == 2 and settings == "cvc":
         settings = "pvc"
         mode = 2
         menu.add_generic_widget(difficulty_selector)
         menu.add_generic_widget(algorithm_selector)
+        menu.add_generic_widget(ordering_selector)
         menu.remove_widget(difficulty_selector_PC1)
         menu.remove_widget(difficulty_selector_PC2)
         menu.remove_widget(algorithm_selector_PC1)
         menu.remove_widget(algorithm_selector_PC2)
+        menu.remove_widget(ordering_selector_PC1)
+        menu.remove_widget(ordering_selector_PC2)
     elif gamemode == 3 and settings == "pvp":
         settings = "cvc"
         mode = 3
@@ -86,15 +109,20 @@ def set_gamemode(value, gamemode):
         menu.add_generic_widget(difficulty_selector_PC2)
         menu.add_generic_widget(algorithm_selector_PC1)
         menu.add_generic_widget(algorithm_selector_PC2)
+        menu.add_generic_widget(ordering_selector_PC1)
+        menu.add_generic_widget(ordering_selector_PC2)
     elif  gamemode == 3 and settings == "pvc":
         settings = "cvc"
         mode = 3
         menu.remove_widget(difficulty_selector)
         menu.remove_widget(algorithm_selector)
+        menu.remove_widget(ordering_selector)
         menu.add_generic_widget(difficulty_selector_PC1)
         menu.add_generic_widget(difficulty_selector_PC2)
         menu.add_generic_widget(algorithm_selector_PC1)
         menu.add_generic_widget(algorithm_selector_PC2)
+        menu.add_generic_widget(ordering_selector_PC1)
+        menu.add_generic_widget(ordering_selector_PC2)
 
     menu.add_generic_widget(quit_button)
 
@@ -338,12 +366,18 @@ difficulty_selector_PC2 = menu.add.selector('Computer 2 (White) Difficulty ', [(
 algorithm_selector = menu.add.selector('Algorithm ', [('Minimax', 1), ('Minimax w/ Alpha/Beta Cuts', 2)], onchange=set_algorithm)
 algorithm_selector_PC1 = menu.add.selector('Algo. Comp. 1 ', [('Minimax', 1), ('Minimax w/ Alpha/Beta Cuts', 2)], onchange=set_algorithm_PC1)
 algorithm_selector_PC2 = menu.add.selector('Algo. Comp. 2 ', [('Minimax', 1), ('Minimax w/ Alpha/Beta Cuts', 2)], onchange=set_algorithm_PC2)
+ordering_selector = menu.add.selector('Ordering ', [('Best', True), ('Worst', False), ('None', None)], onchange=set_ordering)
+ordering_selector_PC1 = menu.add.selector('Ordering Computer 1 ', [('Best', True), ('Worst', False), ('None', None)], onchange=set_ordering_PC1)
+ordering_selector_PC2 = menu.add.selector('Ordering Computer 2 ', [('Best', True), ('Worst', False), ('None', None)], onchange=set_ordering_PC2)
 menu.remove_widget(difficulty_selector)
 menu.remove_widget(difficulty_selector_PC1)
 menu.remove_widget(difficulty_selector_PC2)
 menu.remove_widget(algorithm_selector)
 menu.remove_widget(algorithm_selector_PC1)
 menu.remove_widget(algorithm_selector_PC2)
+menu.remove_widget(ordering_selector)
+menu.remove_widget(ordering_selector_PC1)
+menu.remove_widget(ordering_selector_PC2)
 quit_button = menu.add.button('Quit', pygame_menu.events.EXIT)
 
 
