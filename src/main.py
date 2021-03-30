@@ -104,6 +104,7 @@ def plaverVSPlayer():
     finished = False
     game = Game(WINDOW, 1)
     time_elapsed = None
+    firstMove = True
 
     while run:
         #clock.tick(FPS)
@@ -124,7 +125,17 @@ def plaverVSPlayer():
                         finished = True
                 elif game.button.isOver(pos):
                     #Hint for Player vs Player
-                    pass
+                    if not firstMove:
+                        row, col = game.getLastMove()
+                    else:
+                        row = 0
+                        col = 0
+                        firstMove = False
+
+                    (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, 6, -2000, 2000, 2)
+
+                    game.hintSquarePiece = (oldRow, oldCol)
+                    game.hintSquareToMove = (finalRow, finalCol)
                 
     
         game.update(time_elapsed)
@@ -189,7 +200,7 @@ def pcVSPc():
                 
     
         game.update(time_elapsed)
-    pass
+    
 
 
 def playerVSPc():
@@ -198,6 +209,7 @@ def playerVSPc():
 
     game = Game(WINDOW, 2)
     finished = False
+    firstMove = True
     time_elapsed = None
     
     while run:
@@ -218,7 +230,17 @@ def playerVSPc():
                         finished = True
                 elif game.button.isOver(pos) and game.getPlayer() == 1:
                     #Hint for Player vs PC
-                    pass
+                    if not firstMove:
+                        row, col = game.getLastMove()
+                    else:
+                        row = 0
+                        col = 0
+                        firstMove = False
+
+                    (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, 6, -2000, 2000, 2)
+
+                    game.hintSquarePiece = (oldRow, oldCol)
+                    game.hintSquareToMove = (finalRow, finalCol)
                 
                 elif game.button.isOver(pos) and game.getPlayer() == 2:
                     row, col = game.getLastMove()
