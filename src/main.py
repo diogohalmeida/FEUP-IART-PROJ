@@ -132,7 +132,7 @@ def plaverVSPlayer():
                         col = 0
                         firstMove = False
 
-                    (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, 6, -2000, 2000, 2)
+                    (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, 6, -2000, 2000, game.getPlayer())
 
                     game.hintSquarePiece = (oldRow, oldCol)
                     game.hintSquareToMove = (finalRow, finalCol)
@@ -146,6 +146,8 @@ def plaverVSPlayer():
 def pcVSPc():
     global diff_cvc_1
     global diff_cvc_2
+    global algo_PC1
+    global algo_PC2
     run = True
     game = Game(WINDOW, 3)
     firstMove = True
@@ -172,9 +174,16 @@ def pcVSPc():
                         col = 0
                         firstMove = False
 
-                    start_time = time.time()
-                    (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, diff_cvc_1, -2000, 2000, 2)
-                    end_time = time.time()
+                    if algo_PC1 == 1:
+                        start_time = time.time()
+                        (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, diff_cvc_1, game.getPlayer())
+                        end_time = time.time()
+
+                    elif algo_PC1 == 2:
+                        start_time = time.time()
+                        (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, diff_cvc_1, -2000, 2000, game.getPlayer())
+                        end_time = time.time()
+
                     time_elapsed = end_time-start_time
                     print("Elapsed time: ", time_elapsed)
 
@@ -186,9 +195,17 @@ def pcVSPc():
                 elif game.button.isOver(pos) and game.getPlayer() == 2:
                     row, col = game.getLastMove()
                     
-                    start_time = time.time()
-                    (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, diff_cvc_2, -2000, 2000, 1)
-                    end_time = time.time()
+                    if algo_PC2 == 1:
+                        start_time = time.time()
+                        (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, diff_cvc_2, game.getPlayer())
+                        end_time = time.time()
+
+                    elif algo_PC2 == 2:
+                        start_time = time.time()
+                        (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, diff_cvc_2, -2000, 2000, game.getPlayer())
+                        end_time = time.time()
+
+
                     time_elapsed = end_time-start_time
                     print("Elapsed time: ", time_elapsed)
                     
@@ -236,7 +253,7 @@ def playerVSPc():
                         col = 0
                         firstMove = False
 
-                    (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, 6, -2000, 2000, 2)
+                    (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, 6, -2000, 2000, game.getPlayer())
                     
                     game.hintSquarePiece = (oldRow, oldCol)
                     game.hintSquareToMove = (finalRow, finalCol)
@@ -244,9 +261,16 @@ def playerVSPc():
                 elif game.button.isOver(pos) and game.getPlayer() == 2:
                     row, col = game.getLastMove()
                     
-                    start_time = time.time()
-                    (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, diff_pvc, -2000, 2000, 1)
-                    end_time = time.time()
+                    if algo_PC2 == 1:
+                        start_time = time.time()
+                        (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, diff_pvc, game.getPlayer())
+                        end_time = time.time()
+
+                    elif algo_PC2 == 2:
+                        start_time = time.time()
+                        (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, diff_pvc, -2000, 2000, game.getPlayer())
+                        end_time = time.time()
+
                     time_elapsed = end_time-start_time
                     print("Elapsed time: ", time_elapsed)
                     
@@ -308,12 +332,12 @@ mytheme.widget_padding = 10
 menu = pygame_menu.Menu(HEIGHT, WIDTH, 'NEUTREEKO', theme=mytheme)
 menu.add.button('Play', start_the_game)
 menu.add.selector('Game Mode ', [('Player vs Player', 1), ('Player vs Computer', 2), ('Computer vs Computer', 3)], onchange=set_gamemode)
-difficulty_selector = menu.add.selector('Computer Difficulty ', [('Easy', 1), ('Medium', 2), ('Hard', 6), ('Impossible', 4)], onchange=set_difficulty)
-difficulty_selector_PC1 = menu.add.selector('Computer 1 (Black) Difficulty ', [('Easy', 1), ('Medium', 2), ('Hard', 6), ('Impossible', 4)], onchange=set_difficulty_PC1)
-difficulty_selector_PC2 = menu.add.selector('Computer 2 (White) Difficulty ', [('Easy', 1), ('Medium', 2), ('Hard', 6), ('Impossible', 4)], onchange=set_difficulty_PC2)
-algorithm_selector = menu.add.selector('Algorithm ', [('Minimax', 1), ('Minimax w/ Alpha/Beta Cuts', 2), ('Negamax', 3)], onchange=set_algorithm)
-algorithm_selector_PC1 = menu.add.selector('Algo. Comp. 1 ', [('Minimax', 1), ('Minimax w/ Alpha/Beta Cuts', 2), ('Negamax', 3)], onchange=set_algorithm_PC1)
-algorithm_selector_PC2 = menu.add.selector('Algo. Comp. 2 ', [('Minimax', 1), ('Minimax w/ Alpha/Beta Cuts', 2), ('Negamax', 3)], onchange=set_algorithm_PC2)
+difficulty_selector = menu.add.selector('Computer Difficulty ', [('Easy', 1), ('Medium', 2), ('Hard', 6)], onchange=set_difficulty)
+difficulty_selector_PC1 = menu.add.selector('Computer 1 (Black) Difficulty ', [('Easy', 1), ('Medium', 2), ('Hard', 6)], onchange=set_difficulty_PC1)
+difficulty_selector_PC2 = menu.add.selector('Computer 2 (White) Difficulty ', [('Easy', 1), ('Medium', 2), ('Hard', 6)], onchange=set_difficulty_PC2)
+algorithm_selector = menu.add.selector('Algorithm ', [('Minimax', 1), ('Minimax w/ Alpha/Beta Cuts', 2)], onchange=set_algorithm)
+algorithm_selector_PC1 = menu.add.selector('Algo. Comp. 1 ', [('Minimax', 1), ('Minimax w/ Alpha/Beta Cuts', 2)], onchange=set_algorithm_PC1)
+algorithm_selector_PC2 = menu.add.selector('Algo. Comp. 2 ', [('Minimax', 1), ('Minimax w/ Alpha/Beta Cuts', 2)], onchange=set_algorithm_PC2)
 menu.remove_widget(difficulty_selector)
 menu.remove_widget(difficulty_selector_PC1)
 menu.remove_widget(difficulty_selector_PC2)

@@ -237,8 +237,9 @@ class Game:
         finalOldRow = None
         finalOldCol = None
 
+        opponent = 3 - player
 
-        result = self.heuristics(lastRow, lastCol, player)
+        result = self.heuristics(lastRow, lastCol, opponent)
         x = random.randint(0,9)/10
 
         if result == 1000:
@@ -256,10 +257,10 @@ class Game:
             return (0, 0, 0, 0, 0)'''
 
         if player == 1:
-            pieces = deepcopy(self.board.get_white_pieces())
+            pieces = deepcopy(self.board.get_black_pieces())
 
         else:
-            pieces = deepcopy(self.board.get_black_pieces())
+            pieces = deepcopy(self.board.get_white_pieces())
 
 
         for piece in pieces:
@@ -270,7 +271,7 @@ class Game:
                 moveRow, moveCol = possibleMoves[i]
                 self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
 
-                orderedMoves.append((moveRow, moveCol, self.heuristics(moveRow, moveCol, 3-player)))
+                orderedMoves.append((moveRow, moveCol, self.heuristics(moveRow, moveCol, player)))
 
                 self.board.move_piece(moveRow,moveCol, oldRow, oldCol)
 
@@ -280,7 +281,7 @@ class Game:
             for i in range(0,len(orderedMoves)):
                 moveRow, moveCol, score = orderedMoves[i]
                 self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
-                (m, min_old_row, min_old_col, min_row, min_col) = self.min_with_alpha_beta_cuts(moveRow, moveCol, depth, alpha, beta, 3 - player)
+                (m, min_old_row, min_old_col, min_row, min_col) = self.min_with_alpha_beta_cuts(moveRow, moveCol, depth, alpha, beta, opponent)
 
                 if m > maxv:
                     maxv = m
@@ -338,8 +339,9 @@ class Game:
 
         depth = maxDepth - 1
 
+        opponent = 3 - player
 
-        result = self.heuristics(lastRow, lastCol, player)
+        result = self.heuristics(lastRow, lastCol, opponent)
         x = random.randint(0,9)/10
 
         if result == 1000:
@@ -359,10 +361,10 @@ class Game:
 
 
         if player == 1:
-            pieces = deepcopy(self.board.get_white_pieces())
+            pieces = deepcopy(self.board.get_black_pieces())
 
         else:
-            pieces = deepcopy(self.board.get_black_pieces())
+            pieces = deepcopy(self.board.get_white_pieces())
 
 
         
@@ -374,7 +376,7 @@ class Game:
                 moveRow, moveCol = possibleMoves[i]
                 self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
 
-                orderedMoves.append((moveRow, moveCol, self.heuristics(moveRow, moveCol, 3-player)))
+                orderedMoves.append((moveRow, moveCol, self.heuristics(moveRow, moveCol, player)))
 
                 self.board.move_piece(moveRow,moveCol, oldRow, oldCol)
 
@@ -384,7 +386,7 @@ class Game:
             for i in range(0,len(orderedMoves)):
                 moveRow, moveCol, score = orderedMoves[i]
                 self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
-                (m, max_old_row, max_old_col, max_row, max_col) = self.max_with_alpha_beta_cuts(moveRow, moveCol, depth, alpha, beta, 3- player)
+                (m, max_old_row, max_old_col, max_row, max_col) = self.max_with_alpha_beta_cuts(moveRow, moveCol, depth, alpha, beta, opponent)
 
                 if m < minv:
                     minv = m
@@ -438,8 +440,9 @@ class Game:
         finalOldRow = None
         finalOldCol = None
 
+        opponent = 3 - player
 
-        result = self.heuristics(lastRow, lastCol, player)
+        result = self.heuristics(lastRow, lastCol, opponent)
         x = random.randint(0,9)/10
 
         if result == 1000:
@@ -459,10 +462,10 @@ class Game:
             return (0, 0, 0, 0, 0)'''
 
         if player == 1:
-            pieces = deepcopy(self.board.get_white_pieces())
+            pieces = deepcopy(self.board.get_black_pieces())
 
         else:
-            pieces = deepcopy(self.board.get_black_pieces())
+            pieces = deepcopy(self.board.get_white_pieces())
 
         for piece in pieces:
             oldRow, oldCol = piece
@@ -472,7 +475,7 @@ class Game:
                 moveRow, moveCol = possibleMoves[i]
                 self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
 
-                orderedMoves.append((moveRow, moveCol, self.heuristics(moveRow, moveCol, 3-player)))
+                orderedMoves.append((moveRow, moveCol, self.heuristics(moveRow, moveCol, player)))
 
                 self.board.move_piece(moveRow,moveCol, oldRow, oldCol)
 
@@ -482,7 +485,7 @@ class Game:
             for i in range(0,len(orderedMoves)):
                 moveRow, moveCol, score = orderedMoves[i]
                 self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
-                (m, min_old_row, min_old_col, min_row, min_col) = self.min_with_alpha_beta_cuts(moveRow, moveCol, depth, alpha, beta, 3 - player)
+                (m, min_old_row, min_old_col, min_row, min_col) = self.min(moveRow, moveCol, depth, opponent)
 
                 if m > maxv:
                     maxv = m
@@ -509,8 +512,9 @@ class Game:
 
         depth = maxDepth - 1
 
+        opponent = 3 - player
 
-        result = self.heuristics(lastRow, lastCol, player)
+        result = self.heuristics(lastRow, lastCol, opponent)
         x = random.randint(0,9)/10
 
         if result == 1000:
@@ -530,10 +534,10 @@ class Game:
 
 
         if player == 1:
-            pieces = deepcopy(self.board.get_white_pieces())
+            pieces = deepcopy(self.board.get_black_pieces())
 
         else:
-            pieces = deepcopy(self.board.get_black_pieces())
+            pieces = deepcopy(self.board.get_white_pieces())
 
         for piece in pieces:
             oldRow, oldCol = piece
@@ -543,7 +547,7 @@ class Game:
                 moveRow, moveCol = possibleMoves[i]
                 self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
 
-                orderedMoves.append((moveRow, moveCol, self.heuristics(moveRow, moveCol, 3-player)))
+                orderedMoves.append((moveRow, moveCol, self.heuristics(moveRow, moveCol, player)))
 
                 self.board.move_piece(moveRow,moveCol, oldRow, oldCol)
 
@@ -553,7 +557,7 @@ class Game:
             for i in range(0,len(orderedMoves)):
                 moveRow, moveCol, score = orderedMoves[i]
                 self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
-                (m, max_old_row, max_old_col, max_row, max_col) = self.max_with_alpha_beta_cuts(moveRow, moveCol, depth, alpha, beta, 3- player)
+                (m, max_old_row, max_old_col, max_row, max_col) = self.max(moveRow, moveCol, depth, opponent)
 
                 if m < minv:
                     minv = m
