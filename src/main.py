@@ -159,7 +159,7 @@ def plaverVSPlayer():
                         row = 0
                         col = 0
                         firstMove = False
-
+                    game.nodes = 0
                     start_time = time.perf_counter()
                     (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, 6, -2000, 2000, game.getPlayer(), True, 6)
                     end_time = time.perf_counter()
@@ -216,11 +216,13 @@ def pcVSPc():
                         else:
                             depth = diff_cvc_1
 
+                        game.nodes = 0
                         start_time = time.perf_counter()
                         (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, depth, game.getPlayer(), order_PC1, diff_cvc_1)
                         end_time = time.perf_counter()
 
                     elif algo_PC1 == 2:
+                        game.nodes = 0
                         start_time = time.perf_counter()
                         (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, diff_cvc_1, -2000, 2000, game.getPlayer(), order_PC1,diff_cvc_1)
                         end_time = time.perf_counter()
@@ -242,12 +244,14 @@ def pcVSPc():
                             depth = 5
                         else:
                             depth = diff_cvc_2
-
+                        
+                        game.nodes = 0
                         start_time = time.perf_counter()
                         (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, depth, game.getPlayer(), order_PC2, diff_cvc_2)
                         end_time = time.perf_counter()
 
                     elif algo_PC2 == 2:
+                        game.nodes = 0
                         start_time = time.perf_counter()
                         (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, diff_cvc_2, -2000, 2000, game.getPlayer(), order_PC2, diff_cvc_2)
                         end_time = time.perf_counter()
@@ -301,12 +305,12 @@ def playerVSPc():
                         col = 0
                         firstMove = False
 
+                    game.nodes = 0
                     start_time = time.perf_counter()
                     (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, 6, -2000, 2000, game.getPlayer(), True, 6)
                     end_time = time.perf_counter()
 
                     time_elapsed = end_time-start_time
-                    
                     game.hintSquarePiece = (oldRow, oldCol)
                     game.hintSquareToMove = (finalRow, finalCol)
                 
@@ -318,11 +322,13 @@ def playerVSPc():
                             depth = 5
                         else:
                             depth = diff_pvc
+                        game.nodes = 0
                         start_time = time.perf_counter()
                         (m, oldRow , oldCol , finalRow, finalCol) = game.max(row, col, depth, game.getPlayer(), order, diff_pvc)
                         end_time = time.perf_counter()
 
                     elif algo == 2:
+                        game.nodes = 0
                         start_time = time.perf_counter()
                         (m, oldRow , oldCol , finalRow, finalCol) = game.max_with_alpha_beta_cuts(row, col, diff_pvc, -2000, 2000, game.getPlayer(), order, diff_pvc)
                         end_time = time.perf_counter()

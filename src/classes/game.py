@@ -35,6 +35,7 @@ class Game:
         self.boards = {}
         self.hintSquarePiece = None
         self.hintSquareToMove = None
+        self.nodes = 0
 
     def drawBoard(self):
         self.window.fill((76,188,228))
@@ -76,21 +77,29 @@ class Game:
             self.button.draw(self.window, True)
             
 
-
         if (self.gamemode == 3 and self.time != None):
             myfont = pygame.font.SysFont('', 40)
-            sideboard_title = myfont.render("AI Move took: " + str(round(self.time,5)) + " s", True, BLACK)
+            sideboard_title = myfont.render("AI move took: " + str(round(self.time,5)) + " s", True, BLACK)
             text_rect = sideboard_title.get_rect(center=(1000, 300))
+            self.window.blit(sideboard_title, text_rect)
+            sideboard_title = myfont.render("Visited nodes: " + str(self.nodes) + " nodes", True, BLACK)
+            text_rect = sideboard_title.get_rect(center=(1000, 350))
             self.window.blit(sideboard_title, text_rect)
         elif (self.gamemode == 1 and self.time != None):
             myfont = pygame.font.SysFont('', 40)
-            sideboard_title = myfont.render("Hint Calc. took: " + str(round(self.time,5)) + " s", True, BLACK)
+            sideboard_title = myfont.render("Hint calc. took: " + str(round(self.time,5)) + " s", True, BLACK)
             text_rect = sideboard_title.get_rect(center=(1000, 300))
+            self.window.blit(sideboard_title, text_rect)
+            sideboard_title = myfont.render("Visited nodes: " + str(self.nodes) + " nodes", True, BLACK)
+            text_rect = sideboard_title.get_rect(center=(1000, 350))
             self.window.blit(sideboard_title, text_rect)
         elif (self.gamemode == 2 and self.time != None):
             myfont = pygame.font.SysFont('', 40)
             sideboard_title = myfont.render("Calculation took: " + str(round(self.time,5)) + " s", True, BLACK)
             text_rect = sideboard_title.get_rect(center=(1000, 300))
+            self.window.blit(sideboard_title, text_rect)
+            sideboard_title = myfont.render("Visited nodes: " + str(self.nodes) + " nodes", True, BLACK)
+            text_rect = sideboard_title.get_rect(center=(1000, 350))
             self.window.blit(sideboard_title, text_rect)
 
         if self.winner != None and self.winner != -1:
@@ -301,7 +310,7 @@ class Game:
 
 
             for i in range(0,len(orderedMoves)):
-
+                self.nodes += 1
                 if ordering != None:
                     moveRow, moveCol, score = orderedMoves[i]
                 else:
@@ -416,7 +425,7 @@ class Game:
 
         
             for i in range(0,len(orderedMoves)):
-
+                self.nodes += 1
                 if ordering != None:
                     moveRow, moveCol, score = orderedMoves[i]
                 else:
@@ -525,7 +534,8 @@ class Game:
 
 
             for i in range(0,len(orderedMoves)):
-
+                self.nodes += 1
+                
                 if ordering != None:
                     moveRow, moveCol, score = orderedMoves[i]
                 else:
@@ -607,7 +617,7 @@ class Game:
 
         
             for i in range(0,len(orderedMoves)):
-                
+                self.nodes += 1
                 if ordering != None:
                     moveRow, moveCol, score = orderedMoves[i]
                 else:
