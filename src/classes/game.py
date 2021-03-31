@@ -211,7 +211,7 @@ class Game:
         else:
             return 0
 
-    def heuristics(self, row, col, player):
+    '''def heuristics(self, row, col, player):
 
         if self.board.threeInRow(row, col, player) == player:
             return 1000
@@ -223,10 +223,17 @@ class Game:
             return 100
 
         else:
-            return 0
+            return 0'''
 
+    def chooseHeuristics(self, level, row, col, player):
+        if level == 1:
+            return self.easyLevelHeuristics(row, col, player)
+        elif level == 3:
+            return self.mediumLevelHeuristics(row, col, player)
+        elif level == 6:
+            return self.hardLevelHeuristics(row, col, player)
 
-    def max_with_alpha_beta_cuts(self, lastRow, lastCol, maxDepth, alpha, beta, player, ordering):
+    def max_with_alpha_beta_cuts(self, lastRow, lastCol, maxDepth, alpha, beta, player, ordering, level):
 
         maxv = -2000
 
@@ -239,7 +246,7 @@ class Game:
 
         opponent = 3 - player
 
-        result = self.heuristics(lastRow, lastCol, opponent)
+        result = self.chooseHeuristics(level, lastRow, lastCol, opponent)
         x = random.randint(0,9)/10
 
         if result == 1000:
@@ -272,8 +279,8 @@ class Game:
                 for i in range(0, len(possibleMoves)):
                     moveRow, moveCol = possibleMoves[i]
                     self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
-
-                    orderedMoves.append((moveRow, moveCol, self.heuristics(moveRow, moveCol, player)))
+                    evaluation = self.chooseHeuristics(level, lastRow, lastCol, player)
+                    orderedMoves.append((moveRow, moveCol, evaluation))
 
                     self.board.move_piece(moveRow,moveCol, oldRow, oldCol)
 
@@ -291,7 +298,7 @@ class Game:
                     moveRow, moveCol = orderedMoves[i]
 
                 self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
-                (m, min_old_row, min_old_col, min_row, min_col) = self.min_with_alpha_beta_cuts(moveRow, moveCol, depth, alpha, beta, opponent, ordering)
+                (m, min_old_row, min_old_col, min_row, min_col) = self.min_with_alpha_beta_cuts(moveRow, moveCol, depth, alpha, beta, opponent, ordering, level)
 
                 if m > maxv:
                     maxv = m
@@ -338,7 +345,7 @@ class Game:
         return (maxv, finalOldRow, finalOldCol, finalRow, finalCol)
 
 
-    def min_with_alpha_beta_cuts(self, lastRow, lastCol, maxDepth, alpha, beta, player, ordering):
+    def min_with_alpha_beta_cuts(self, lastRow, lastCol, maxDepth, alpha, beta, player, ordering, level):
 
         minv = 2000
 
@@ -351,7 +358,7 @@ class Game:
 
         opponent = 3 - player
 
-        result = self.heuristics(lastRow, lastCol, opponent)
+        result = self.chooseHeuristics(level, lastRow, lastCol, opponent)
         x = random.randint(0,9)/10
 
         if result == 1000:
@@ -387,8 +394,8 @@ class Game:
                 for i in range(0, len(possibleMoves)):
                     moveRow, moveCol = possibleMoves[i]
                     self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
-
-                    orderedMoves.append((moveRow, moveCol, self.heuristics(moveRow, moveCol, player)))
+                    evaluation = self.chooseHeuristics(level, lastRow, lastCol, player)
+                    orderedMoves.append((moveRow, moveCol, evaluation))
 
                     self.board.move_piece(moveRow,moveCol, oldRow, oldCol)
 
@@ -406,7 +413,7 @@ class Game:
                     moveRow, moveCol = orderedMoves[i]
 
                 self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
-                (m, max_old_row, max_old_col, max_row, max_col) = self.max_with_alpha_beta_cuts(moveRow, moveCol, depth, alpha, beta, opponent, ordering)
+                (m, max_old_row, max_old_col, max_row, max_col) = self.max_with_alpha_beta_cuts(moveRow, moveCol, depth, alpha, beta, opponent, ordering, level)
 
                 if m < minv:
                     minv = m
@@ -449,7 +456,7 @@ class Game:
         return (minv, finalOldRow , finalOldCol ,finalRow, finalCol)
 
 
-    def max(self, lastRow, lastCol, maxDepth, player, ordering):
+    def max(self, lastRow, lastCol, maxDepth, player, ordering, level):
 
         maxv = -2000
 
@@ -462,7 +469,7 @@ class Game:
 
         opponent = 3 - player
 
-        result = self.heuristics(lastRow, lastCol, opponent)
+        result = self.chooseHeuristics(level, lastRow, lastCol, opponent)
         x = random.randint(0,9)/10
 
         if result == 1000:
@@ -496,8 +503,8 @@ class Game:
                 for i in range(0, len(possibleMoves)):
                     moveRow, moveCol = possibleMoves[i]
                     self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
-
-                    orderedMoves.append((moveRow, moveCol, self.heuristics(moveRow, moveCol, player)))
+                    evaluation = self.chooseHeuristics(level, lastRow, lastCol, player)
+                    orderedMoves.append((moveRow, moveCol, evaluation))
 
                     self.board.move_piece(moveRow,moveCol, oldRow, oldCol)
 
@@ -515,7 +522,7 @@ class Game:
                     moveRow, moveCol = orderedMoves[i]
 
                 self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
-                (m, min_old_row, min_old_col, min_row, min_col) = self.min(moveRow, moveCol, depth, opponent, ordering)
+                (m, min_old_row, min_old_col, min_row, min_col) = self.min(moveRow, moveCol, depth, opponent, ordering, level)
 
                 if m > maxv:
                     maxv = m
@@ -531,7 +538,7 @@ class Game:
 
                     
 
-    def min(self, lastRow, lastCol, maxDepth, player, ordering):
+    def min(self, lastRow, lastCol, maxDepth, player, ordering, level):
 
         minv = 2000
 
@@ -544,7 +551,7 @@ class Game:
 
         opponent = 3 - player
 
-        result = self.heuristics(lastRow, lastCol, opponent)
+        result = self.chooseHeuristics(level, lastRow, lastCol, opponent)
         x = random.randint(0,9)/10
 
         if result == 1000:
@@ -578,8 +585,8 @@ class Game:
                 for i in range(0, len(possibleMoves)):
                     moveRow, moveCol = possibleMoves[i]
                     self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
-
-                    orderedMoves.append((moveRow, moveCol, self.heuristics(moveRow, moveCol, player)))
+                    evaluation = self.chooseHeuristics(level, lastRow, lastCol, player)
+                    orderedMoves.append((moveRow, moveCol, evaluation))
 
                     self.board.move_piece(moveRow,moveCol, oldRow, oldCol)
 
@@ -597,7 +604,7 @@ class Game:
                     moveRow, moveCol = orderedMoves[i]
 
                 self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
-                (m, max_old_row, max_old_col, max_row, max_col) = self.max(moveRow, moveCol, depth, opponent, ordering)
+                (m, max_old_row, max_old_col, max_row, max_col) = self.max(moveRow, moveCol, depth, opponent, ordering, level)
 
                 if m < minv:
                     minv = m
