@@ -230,19 +230,6 @@ class Game:
         else:
             return 0
 
-    '''def heuristics(self, row, col, player):
-
-        if self.board.threeInRow(row, col, player) == player:
-            return 1000
-
-        elif self.board.twoInRow(row, col, player) == player:
-            return 200
-
-        elif self.board.twoPiecesClose(row, col, player) == player:
-            return 100
-
-        else:
-            return 0'''
 
     def chooseHeuristics(self, level, row, col, player):
         if level == 1:
@@ -273,14 +260,7 @@ class Game:
 
         elif result != 1000 and depth == -1:
             return (-result - depth - x, 0, 0, 0, 0)
-        '''if self.board.twoInRow(lastRow, lastCol, player) == player and depth == -1:
-            return (-200 - depth - x, 0, 0, 0, 0)
 
-        if self.board.twoPiecesClose(lastRow, lastCol, player) == player and depth == -1:
-            return (-100 - depth - x, 0, 0, 0, 0)
-
-        if depth == -1:
-            return (0, 0, 0, 0, 0)'''
 
         if player == 1:
             pieces = deepcopy(self.board.get_black_pieces())
@@ -333,32 +313,6 @@ class Game:
 
                 if maxv > alpha:
                     alpha = maxv
-
-
-
-        '''for piece in pieces:
-            oldRow, oldCol = piece
-            possibleMoves = self.board.get_valid_moves(oldRow, oldCol)
-            for i in range(0,len(possibleMoves)):
-                moveRow, moveCol = possibleMoves[i]
-                self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
-                (m, min_old_row, min_old_col, min_row, min_col) = self.min_with_alpha_beta_cuts(moveRow, moveCol, depth, alpha, beta, 3 - player)
-
-                if m > maxv:
-                    maxv = m
-                    finalRow = moveRow
-                    finalCol = moveCol
-                    finalOldRow = oldRow
-                    finalOldCol = oldCol
-
-                self.board.move_piece(moveRow,moveCol, oldRow, oldCol)
-
-                if maxv >= beta:
-                    return (maxv, finalOldRow, finalOldCol, finalRow, finalCol)
-
-                if maxv > alpha:
-                    alpha = maxv'''
-            
                 
 
         return (maxv, finalOldRow, finalOldCol, finalRow, finalCol)
@@ -385,15 +339,6 @@ class Game:
 
         elif result != 1000 and depth == -1:
             return (result + depth + x, 0, 0, 0, 0)
-
-        '''if self.board.twoInRow(lastRow, lastCol, player) == player and depth == -1:
-            return (200 + depth + x, 0, 0, 0, 0)
-
-        if self.board.twoPiecesClose(lastRow, lastCol, player) == player and depth == -1:
-            return (100 + depth + x, 0, 0, 0, 0)
-
-        if depth == -1:
-            return (0, 0, 0, 0, 0)'''
 
 
         if player == 1:
@@ -449,28 +394,6 @@ class Game:
                 if minv < beta:
                     beta = minv
 
-        '''for piece in pieces:
-            oldRow, oldCol = piece
-            possibleMoves = self.board.get_valid_moves(oldRow, oldCol)
-            for i in range(0,len(possibleMoves)):
-                moveRow, moveCol = possibleMoves[i]
-                self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
-                (m, max_old_row, max_old_col, max_row, max_col) = self.max_with_alpha_beta_cuts(moveRow, moveCol, depth, alpha, beta, 3- player)
-
-                if m < minv:
-                    minv = m
-                    finalRow = moveRow
-                    finalCol = moveCol
-                    finalOldRow = oldRow
-                    finalOldCol = oldCol
-
-                self.board.move_piece(moveRow,moveCol, oldRow, oldCol)
-
-                if minv <= alpha :
-                    return (minv, finalOldRow , finalOldCol ,finalRow, finalCol)
-
-                if minv < beta:
-                    beta = minv'''
 
         return (minv, finalOldRow , finalOldCol ,finalRow, finalCol)
 
@@ -497,15 +420,6 @@ class Game:
         elif result != 1000 and depth == -1:
             return (-result - depth - x, 0, 0, 0, 0)
 
-        '''if result == player:
-            return (-1000 - depth - x, 0, 0, 0, 0)
-
-        if self.board.twoInRow(lastRow, lastCol, player) == player and depth == -1:
-            return (-100 - depth - x, 0, 0, 0, 0)
-
-
-        if depth == -1:
-            return (0, 0, 0, 0, 0)'''
 
         if player == 1:
             pieces = deepcopy(self.board.get_black_pieces())
@@ -579,15 +493,6 @@ class Game:
 
         elif result != 1000 and depth == -1:
             return (result + depth + x, 0, 0, 0, 0)
-
-        '''if result == player:
-            return (1000 + depth + x, 0, 0, 0, 0)
-
-        if self.board.twoInRow(lastRow, lastCol, player) == player and depth == -1:
-            return (100 + depth + x, 0, 0, 0, 0)
-
-        if depth == -1:
-            return (0, 0, 0, 0, 0)'''
 
 
         if player == 1:

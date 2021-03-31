@@ -173,8 +173,6 @@ def plaverVSPlayer():
         game.update(time_elapsed)
     
    
-
-
 def pcVSPc():
     global diff_cvc_1
     global diff_cvc_2
