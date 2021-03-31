@@ -33,13 +33,20 @@ class Game:
         self.valid_moves = []
         self.lastMove = None
         self.boards = {}
+        self.hintSquarePiece = None
+        self.hintSquareToMove = None
+        self.nodes = 0
 
     def drawBoard(self):
         self.window.fill((76,188,228))
         
         for row in range(ROWS):
             for col in range(COLS):
-                pygame.draw.rect(self.window, BLUE, (row*SQUARE_SIZE,col*SQUARE_SIZE,SQUARE_SIZE,SQUARE_SIZE), 0)
+                if (col, row) == self.hintSquarePiece:
+                    pygame.draw.rect(self.window, GREEN, (row*SQUARE_SIZE,col*SQUARE_SIZE,SQUARE_SIZE,SQUARE_SIZE), 0)
+                else:
+                    pygame.draw.rect(self.window, BLUE, (row*SQUARE_SIZE,col*SQUARE_SIZE,SQUARE_SIZE,SQUARE_SIZE), 0)
+
                 pygame.draw.rect(self.window, BLACK, (row*SQUARE_SIZE,col*SQUARE_SIZE,SQUARE_SIZE,SQUARE_SIZE), 1)
 
 
@@ -70,11 +77,29 @@ class Game:
             self.button.draw(self.window, True)
             
 
-
-        if self.gamemode != 1 and self.time != None:
+        if (self.gamemode == 3 and self.time != None):
             myfont = pygame.font.SysFont('', 40)
-            sideboard_title = myfont.render("AI Move took: " + str(round(self.time,3)) + " s", True, BLACK)
+            sideboard_title = myfont.render("AI move took: " + str(round(self.time,5)) + " s", True, BLACK)
             text_rect = sideboard_title.get_rect(center=(1000, 300))
+            self.window.blit(sideboard_title, text_rect)
+            sideboard_title = myfont.render("Visited nodes: " + str(self.nodes) + " nodes", True, BLACK)
+            text_rect = sideboard_title.get_rect(center=(1000, 350))
+            self.window.blit(sideboard_title, text_rect)
+        elif (self.gamemode == 1 and self.time != None):
+            myfont = pygame.font.SysFont('', 40)
+            sideboard_title = myfont.render("Hint calc. took: " + str(round(self.time,5)) + " s", True, BLACK)
+            text_rect = sideboard_title.get_rect(center=(1000, 300))
+            self.window.blit(sideboard_title, text_rect)
+            sideboard_title = myfont.render("Visited nodes: " + str(self.nodes) + " nodes", True, BLACK)
+            text_rect = sideboard_title.get_rect(center=(1000, 350))
+            self.window.blit(sideboard_title, text_rect)
+        elif (self.gamemode == 2 and self.time != None):
+            myfont = pygame.font.SysFont('', 40)
+            sideboard_title = myfont.render("Calculation took: " + str(round(self.time,5)) + " s", True, BLACK)
+            text_rect = sideboard_title.get_rect(center=(1000, 300))
+            self.window.blit(sideboard_title, text_rect)
+            sideboard_title = myfont.render("Visited nodes: " + str(self.nodes) + " nodes", True, BLACK)
+            text_rect = sideboard_title.get_rect(center=(1000, 350))
             self.window.blit(sideboard_title, text_rect)
 
         if self.winner != None and self.winner != -1:
@@ -148,6 +173,8 @@ class Game:
     def change_turn(self):
         self.valid_moves = []
         self.player = 3 - self.player
+        self.hintSquarePiece = None
+        self.hintSquareToMove = None
         if self.board.board_as_string() in self.boards.keys():
             self.boards[self.board.board_as_string()] += 1
         else:
@@ -157,7 +184,10 @@ class Game:
     def draw_valid_moves(self,moves):
         for move in moves:
             row, col = move
-            self.window.blit(GRAY_DOT,(SQUARE_SIZE*col+66,SQUARE_SIZE*row+66))
+            if (row, col) == self.hintSquareToMove:
+                self.window.blit(GREEN_DOT,(SQUARE_SIZE*col+66,SQUARE_SIZE*row+66))
+            else:
+                self.window.blit(GRAY_DOT,(SQUARE_SIZE*col+66,SQUARE_SIZE*row+66))
 
     def checkWin(self):
         if self.lastMove == None :
@@ -169,7 +199,47 @@ class Game:
         self.winner = self.board.threeInRow(row,col, 3-self.player)  
         return self.board.threeInRow(row,col, 3-self.player)
 
-    def max_with_alpha_beta_cuts(self, lastRow, lastCol, maxDepth, alpha, beta, player):
+    
+    def easyLevelHeuristics(self, row, col, player):
+        if self.board.threeInRow(row, col, player) == player:
+            return 1000
+
+        else:
+            return 0
+
+    def mediumLevelHeuristics(self, row, col, player):
+        if self.board.threeInRow(row, col, player) == player:
+            return 1000
+
+        elif self.board.twoInRow(row, col, player) == player:
+            return 200
+
+        else:
+            return 0
+
+    def hardLevelHeuristics(self, row, col, player):
+        if self.board.threeInRow(row, col, player) == player:
+            return 1000
+
+        elif self.board.twoInRow(row, col, player) == player:
+            return 200
+
+        elif self.board.twoPiecesClose(row, col, player) == player:
+            return 100
+
+        else:
+            return 0
+
+
+    def chooseHeuristics(self, level, row, col, player):
+        if level == 1:
+            return self.easyLevelHeuristics(row, col, player)
+        elif level == 3:
+            return self.mediumLevelHeuristics(row, col, player)
+        elif level == 6:
+            return self.hardLevelHeuristics(row, col, player)
+
+    def max_with_alpha_beta_cuts(self, lastRow, lastCol, maxDepth, alpha, beta, player, ordering, level):
 
         maxv = -2000
 
@@ -180,40 +250,54 @@ class Game:
         finalOldRow = None
         finalOldCol = None
 
+        opponent = 3 - player
 
-        result = self.board.threeInRow(lastRow, lastCol, player)
+        result = self.chooseHeuristics(level, lastRow, lastCol, opponent)
         x = random.randint(0,9)/10
 
-        if result == player:
-            return (-1000 - depth - x, 0, 0, 0, 0)
+        if result == 1000:
+            return (-result - depth - x, 0, 0, 0, 0)
 
-        if self.board.twoInRow(lastRow, lastCol, player) == player and depth == -1:
-            #print("Entrei no max 2")
-            #x = random.randint(0,9)/10
-            return (-200 - depth - x, 0, 0, 0, 0)
+        elif result != 1000 and depth == -1:
+            return (-result - depth - x, 0, 0, 0, 0)
 
-        if self.board.twoPiecesClose(lastRow, lastCol, player) == player and depth == -1:
-            #print("Entrei no max 3")
-            #x = random.randint(0,9)/10
-            return (-100 - depth - x, 0, 0, 0, 0)
-
-
-        if depth == -1:
-            return (0, 0, 0, 0, 0)
 
         if player == 1:
-            pieces = deepcopy(self.board.get_white_pieces())
+            pieces = deepcopy(self.board.get_black_pieces())
 
         else:
-            pieces = deepcopy(self.board.get_black_pieces())
+            pieces = deepcopy(self.board.get_white_pieces())
+
 
         for piece in pieces:
             oldRow, oldCol = piece
             possibleMoves = self.board.get_valid_moves(oldRow, oldCol)
-            for i in range(0,len(possibleMoves)):
-                moveRow, moveCol = possibleMoves[i]
+            orderedMoves = []
+
+            if ordering != None:
+                for i in range(0, len(possibleMoves)):
+                    moveRow, moveCol = possibleMoves[i]
+                    self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
+                    evaluation = self.chooseHeuristics(level, lastRow, lastCol, player)
+                    orderedMoves.append((moveRow, moveCol, evaluation))
+
+                    self.board.move_piece(moveRow,moveCol, oldRow, oldCol)
+
+                orderedMoves = sorted(orderedMoves, key = lambda x: x[2], reverse=ordering)
+
+            else:               
+                orderedMoves = possibleMoves
+
+
+            for i in range(0,len(orderedMoves)):
+                self.nodes += 1
+                if ordering != None:
+                    moveRow, moveCol, score = orderedMoves[i]
+                else:
+                    moveRow, moveCol = orderedMoves[i]
+
                 self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
-                (m, min_old_row, min_old_col, min_row, min_col) = self.min_with_alpha_beta_cuts(moveRow, moveCol, depth, alpha, beta, 3 - player)
+                (m, min_old_row, min_old_col, min_row, min_col) = self.min_with_alpha_beta_cuts(moveRow, moveCol, depth, alpha, beta, opponent, ordering, level)
 
                 if m > maxv:
                     maxv = m
@@ -229,13 +313,12 @@ class Game:
 
                 if maxv > alpha:
                     alpha = maxv
-            
                 
 
         return (maxv, finalOldRow, finalOldCol, finalRow, finalCol)
 
 
-    def min_with_alpha_beta_cuts(self, lastRow, lastCol, maxDepth, alpha, beta, player):
+    def min_with_alpha_beta_cuts(self, lastRow, lastCol, maxDepth, alpha, beta, player, ordering, level):
 
         minv = 2000
 
@@ -246,40 +329,55 @@ class Game:
 
         depth = maxDepth - 1
 
+        opponent = 3 - player
 
-        result = self.board.threeInRow(lastRow, lastCol, player)
+        result = self.chooseHeuristics(level, lastRow, lastCol, opponent)
         x = random.randint(0,9)/10
 
-        if result == player:
-            return (1000 + depth + x, 0, 0, 0, 0)
+        if result == 1000:
+            return (result + depth + x, 0, 0, 0, 0)
 
-        if self.board.twoInRow(lastRow, lastCol, player) == player and depth == -1:
-            #print("Entrei no min 2")
-            #x = random.randint(0,9)/10
-            return (200 + depth + x, 0, 0, 0, 0)
-
-        if self.board.twoPiecesClose(lastRow, lastCol, player) == player and depth == -1:
-            #print("Entrei no min 3")
-            #x = random.randint(0,9)/10
-            return (100 + depth + x, 0, 0, 0, 0)
-
-        if depth == -1:
-            return (0, 0, 0, 0, 0)
+        elif result != 1000 and depth == -1:
+            return (result + depth + x, 0, 0, 0, 0)
 
 
         if player == 1:
-            pieces = deepcopy(self.board.get_white_pieces())
-
-        else:
             pieces = deepcopy(self.board.get_black_pieces())
 
+        else:
+            pieces = deepcopy(self.board.get_white_pieces())
+
+
+        
         for piece in pieces:
             oldRow, oldCol = piece
             possibleMoves = self.board.get_valid_moves(oldRow, oldCol)
-            for i in range(0,len(possibleMoves)):
-                moveRow, moveCol = possibleMoves[i]
+            orderedMoves = []
+
+            if ordering != None:
+                for i in range(0, len(possibleMoves)):
+                    moveRow, moveCol = possibleMoves[i]
+                    self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
+                    evaluation = self.chooseHeuristics(level, lastRow, lastCol, player)
+                    orderedMoves.append((moveRow, moveCol, evaluation))
+
+                    self.board.move_piece(moveRow,moveCol, oldRow, oldCol)
+
+                orderedMoves = sorted(orderedMoves, key = lambda x: x[2], reverse=ordering)
+
+            else:               
+                orderedMoves = possibleMoves
+
+        
+            for i in range(0,len(orderedMoves)):
+                self.nodes += 1
+                if ordering != None:
+                    moveRow, moveCol, score = orderedMoves[i]
+                else:
+                    moveRow, moveCol = orderedMoves[i]
+
                 self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
-                (m, max_old_row, max_old_col, max_row, max_col) = self.max_with_alpha_beta_cuts(moveRow, moveCol, depth, alpha, beta, 3- player)
+                (m, max_old_row, max_old_col, max_row, max_col) = self.max_with_alpha_beta_cuts(moveRow, moveCol, depth, alpha, beta, opponent, ordering, level)
 
                 if m < minv:
                     minv = m
@@ -296,10 +394,11 @@ class Game:
                 if minv < beta:
                     beta = minv
 
+
         return (minv, finalOldRow , finalOldCol ,finalRow, finalCol)
 
 
-    def max(self, lastRow, lastCol, maxDepth, player):
+    def max(self, lastRow, lastCol, maxDepth, player, ordering, level):
 
         maxv = -2000
 
@@ -310,34 +409,54 @@ class Game:
         finalOldRow = None
         finalOldCol = None
 
+        opponent = 3 - player
 
-        result = self.board.threeInRow(lastRow, lastCol, player)
+        result = self.chooseHeuristics(level, lastRow, lastCol, opponent)
         x = random.randint(0,9)/10
 
-        if result == player:
-            return (-1000 - depth - x, 0, 0, 0, 0)
+        if result == 1000:
+            return (-result - depth - x, 0, 0, 0, 0)
 
-        if self.board.twoInRow(lastRow, lastCol, player) == player and depth == -1:
-            #x = random.randint(0,9)/10
-            return (-100 - depth - x, 0, 0, 0, 0)
+        elif result != 1000 and depth == -1:
+            return (-result - depth - x, 0, 0, 0, 0)
 
-
-        if depth == -1:
-            return (0, 0, 0, 0, 0)
 
         if player == 1:
-            pieces = deepcopy(self.board.get_white_pieces())
+            pieces = deepcopy(self.board.get_black_pieces())
 
         else:
-            pieces = deepcopy(self.board.get_black_pieces())
+            pieces = deepcopy(self.board.get_white_pieces())
 
         for piece in pieces:
             oldRow, oldCol = piece
             possibleMoves = self.board.get_valid_moves(oldRow, oldCol)
-            for i in range(0,len(possibleMoves)):
-                moveRow, moveCol = possibleMoves[i]
+            orderedMoves = []
+
+            if ordering != None:
+                for i in range(0, len(possibleMoves)):
+                    moveRow, moveCol = possibleMoves[i]
+                    self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
+                    evaluation = self.chooseHeuristics(level, lastRow, lastCol, player)
+                    orderedMoves.append((moveRow, moveCol, evaluation))
+
+                    self.board.move_piece(moveRow,moveCol, oldRow, oldCol)
+
+                orderedMoves = sorted(orderedMoves, key = lambda x: x[2], reverse=ordering)
+
+            else:               
+                orderedMoves = possibleMoves 
+
+
+            for i in range(0,len(orderedMoves)):
+                self.nodes += 1
+                
+                if ordering != None:
+                    moveRow, moveCol, score = orderedMoves[i]
+                else:
+                    moveRow, moveCol = orderedMoves[i]
+
                 self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
-                (m, min_old_row, min_old_col, min_row, min_col) = self.min(moveRow, moveCol, depth, 3 - player)
+                (m, min_old_row, min_old_col, min_row, min_col) = self.min(moveRow, moveCol, depth, opponent, ordering, level)
 
                 if m > maxv:
                     maxv = m
@@ -353,7 +472,7 @@ class Game:
 
                     
 
-    def min(self, lastRow, lastCol, maxDepth, player):
+    def min(self, lastRow, lastCol, maxDepth, player, ordering, level):
 
         minv = 2000
 
@@ -364,34 +483,53 @@ class Game:
 
         depth = maxDepth - 1
 
+        opponent = 3 - player
 
-        result = self.board.threeInRow(lastRow, lastCol, player)
+        result = self.chooseHeuristics(level, lastRow, lastCol, opponent)
         x = random.randint(0,9)/10
 
-        if result == player:
-            return (1000 + depth + x, 0, 0, 0, 0)
+        if result == 1000:
+            return (result + depth + x, 0, 0, 0, 0)
 
-        if self.board.twoInRow(lastRow, lastCol, player) == player and depth == -1:
-            #x = random.randint(0,9)/10
-            return (100 + depth + x, 0, 0, 0, 0)
-
-        if depth == -1:
-            return (0, 0, 0, 0, 0)
+        elif result != 1000 and depth == -1:
+            return (result + depth + x, 0, 0, 0, 0)
 
 
         if player == 1:
-            pieces = deepcopy(self.board.get_white_pieces())
+            pieces = deepcopy(self.board.get_black_pieces())
 
         else:
-            pieces = deepcopy(self.board.get_black_pieces())
+            pieces = deepcopy(self.board.get_white_pieces())
 
         for piece in pieces:
             oldRow, oldCol = piece
             possibleMoves = self.board.get_valid_moves(oldRow, oldCol)
-            for i in range(0,len(possibleMoves)):
-                moveRow, moveCol = possibleMoves[i]
+            orderedMoves = []
+
+            if ordering != None:
+                for i in range(0, len(possibleMoves)):
+                    moveRow, moveCol = possibleMoves[i]
+                    self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
+                    evaluation = self.chooseHeuristics(level, lastRow, lastCol, player)
+                    orderedMoves.append((moveRow, moveCol, evaluation))
+
+                    self.board.move_piece(moveRow,moveCol, oldRow, oldCol)
+
+                orderedMoves = sorted(orderedMoves, key = lambda x: x[2], reverse=ordering)
+
+            else:               
+                orderedMoves = possibleMoves
+
+        
+            for i in range(0,len(orderedMoves)):
+                self.nodes += 1
+                if ordering != None:
+                    moveRow, moveCol, score = orderedMoves[i]
+                else:
+                    moveRow, moveCol = orderedMoves[i]
+
                 self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
-                (m, max_old_row, max_old_col, max_row, max_col) = self.max_with_alpha_beta_cuts(moveRow, moveCol, depth, 3 - player)
+                (m, max_old_row, max_old_col, max_row, max_col) = self.max(moveRow, moveCol, depth, opponent, ordering, level)
 
                 if m < minv:
                     minv = m
@@ -404,86 +542,3 @@ class Game:
 
 
         return (minv, finalOldRow , finalOldCol ,finalRow, finalCol)
-
-    #negamax not working
-    def max_for_negamax(self, lastRow, lastCol, maxDepth, alpha, beta, player, signal):
-        
-        maxv = -2000
-        minv = 2000
-
-        depth = maxDepth - 1
-
-        finalRow = None
-        finalCol = None
-        finalOldRow = None
-        finalOldCol = None
-
-
-        result = self.board.threeInRow(lastRow, lastCol, player)
-
-        if result == player:
-            x = random.randint(0,9)/10
-            return (signal*1000 + signal*depth + signal*x, 0, 0, 0, 0)
-
-        if self.board.twoInRow(lastRow, lastCol, player) == player and depth == -1:
-            x = random.randint(0,9)/10
-            return (signal*100 + signal*depth + signal*x, 0, 0, 0, 0)
-
-
-        if depth == -1:
-            return (0, 0, 0, 0, 0)
-
-        if player == 1:
-            pieces = deepcopy(self.board.get_white_pieces())
-
-        else:
-            pieces = deepcopy(self.board.get_black_pieces())
-
-        for piece in pieces:
-            oldRow, oldCol = piece
-            possibleMoves = self.board.get_valid_moves(oldRow, oldCol)
-            for i in range(0,len(possibleMoves)):
-                moveRow, moveCol = possibleMoves[i]
-                self.board.move_piece(oldRow, oldCol, moveRow,moveCol)
-                (m, min_old_row, min_old_col, min_row, min_col) = self.max_for_negamax(moveRow, moveCol, depth, alpha, beta, 3 - player, -signal)
-
-                if m > maxv and signal > 0:
-                    maxv = m
-                    finalRow = moveRow
-                    finalCol = moveCol
-                    finalOldRow = oldRow
-                    finalOldCol = oldCol
-
-                if m < minv and signal < 0:
-                    minv = m
-                    finalRow = moveRow
-                    finalCol = moveCol
-                    finalOldRow = oldRow
-                    finalOldCol = oldCol
-
-
-                self.board.move_piece(moveRow,moveCol, oldRow, oldCol)
-
-                if maxv >= beta and signal > 0:
-                    return (maxv, finalOldRow, finalOldCol, finalRow, finalCol)
-
-                if maxv > alpha and signal > 0:
-                    alpha = maxv
-
-                if minv <= alpha and signal < 0:
-                    return (minv, finalOldRow , finalOldCol ,finalRow, finalCol)
-
-                if minv < beta and signal < 0:
-                    beta = minv
-            
-        if signal > 0:     
-            return (maxv, finalOldRow, finalOldCol, finalRow, finalCol)
-
-        elif signal < 0:
-            return (minv, finalOldRow, finalOldCol, finalRow, finalCol)
-
-
-
-    def negamax(self, lastRow, lastCol, maxDepth, alpha, beta, player):
-
-        return self.max_for_negamax(lastRow, lastCol, maxDepth, alpha, beta, player, 1)
