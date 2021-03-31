@@ -77,9 +77,19 @@ class Game:
             
 
 
-        if self.gamemode != 1 and self.time != None:
+        if (self.gamemode == 3 and self.time != None):
             myfont = pygame.font.SysFont('', 40)
-            sideboard_title = myfont.render("AI Move took: " + str(round(self.time,3)) + " s", True, BLACK)
+            sideboard_title = myfont.render("AI Move took: " + str(round(self.time,5)) + " s", True, BLACK)
+            text_rect = sideboard_title.get_rect(center=(1000, 300))
+            self.window.blit(sideboard_title, text_rect)
+        elif (self.gamemode == 1 and self.time != None):
+            myfont = pygame.font.SysFont('', 40)
+            sideboard_title = myfont.render("Hint Calc. took: " + str(round(self.time,5)) + " s", True, BLACK)
+            text_rect = sideboard_title.get_rect(center=(1000, 300))
+            self.window.blit(sideboard_title, text_rect)
+        elif (self.gamemode == 2 and self.time != None):
+            myfont = pygame.font.SysFont('', 40)
+            sideboard_title = myfont.render("Calculation took: " + str(round(self.time,5)) + " s", True, BLACK)
             text_rect = sideboard_title.get_rect(center=(1000, 300))
             self.window.blit(sideboard_title, text_rect)
 
