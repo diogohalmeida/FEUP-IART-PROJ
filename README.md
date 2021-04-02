@@ -3,6 +3,13 @@
 ## How to compile
 1. You will need to install [Python3](https://www.python.org/downloads/) (we used Python 3.9.2)
 2. You will need the [pygame](https://www.pygame.org/wiki/GettingStarted) and [pygame-menu](https://pygame-menu.readthedocs.io/en/4.0.1/) modules  
+```shell
+pip install pygame
+```
+
+```shell
+pip install pygame-menu
+```
 
 ## How ro run
 - In a Python IDE:
