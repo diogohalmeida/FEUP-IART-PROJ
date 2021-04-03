@@ -3,7 +3,6 @@ import pygame_menu
 import time
 import datetime
 from constants import WHITE_PIECE, BLACK_PIECE
-from copy import deepcopy
 import sys
 sys.setrecursionlimit(1000)
 pygame.init()
