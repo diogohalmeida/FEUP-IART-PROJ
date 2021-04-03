@@ -11,10 +11,10 @@ pygame.init()
 from constants import WIDTH, HEIGHT, SQUARE_SIZE
 from classes.game import Game
 
-FPS = 60
-
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Neutreeko')
+
+#mgit adenu global variables
 settings = "pvp"
 diff_pvc = 1
 diff_cvc_1 = 1
@@ -27,7 +27,7 @@ order = True
 order_PC1 = True
 order_PC2 = True
 
-
+#functions to change the menu's global variables
 def set_difficulty(value, difficulty):
     global diff_pvc
     diff_pvc = difficulty
@@ -65,6 +65,7 @@ def set_ordering_PC2(value, ordering):
     order_PC2 = ordering
 
 
+#function that contains the "state machine" for the menu
 def set_gamemode(value, gamemode):
     global settings
     global mode
@@ -353,7 +354,7 @@ def start_the_game():
     elif mode == 3:
         pcVSPc()
 
-#function go get the position of the mouse in the screen
+#function to get the position of the mouse in the screen
 def get_row_col_from_mouse(pos):
     x,y = pos
     row = y // SQUARE_SIZE
@@ -370,6 +371,7 @@ def main():
     pygame.quit()
 
 
+#pygame-menu functions
 mytheme = pygame_menu.themes.THEME_DEFAULT.copy()
 
 myimage = pygame_menu.baseimage.BaseImage(image_path='assets/bg.png', drawing_mode=pygame_menu.baseimage.IMAGE_MODE_FILL)

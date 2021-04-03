@@ -212,7 +212,7 @@ class Game:
         self.winner = self.board.threeInRow(row,col, 3-self.player)  
         return self.board.threeInRow(row,col, 3-self.player)
 
-    #method that evaluates the score of the board in easy level
+    #method that evaluates the score of the board on easy level
     def easyLevelHeuristics(self, row, col, player):
         if self.board.threeInRow(row, col, player) == player:
             return 1000
@@ -220,7 +220,7 @@ class Game:
         else:
             return 0
 
-    #method that evaluates the score of the board in medium level
+    #method that evaluates the score of the board on medium level
     def mediumLevelHeuristics(self, row, col, player):
         if self.board.threeInRow(row, col, player) == player:
             return 1000
@@ -231,7 +231,7 @@ class Game:
         else:
             return 0
 
-    #method that evaluates the score of the board in hard level (best heuristic)
+    #method that evaluates the score of the board on hard level (best heuristic)
     def hardLevelHeuristics(self, row, col, player):
         if self.board.threeInRow(row, col, player) == player:
             return 1000
