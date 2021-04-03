@@ -127,6 +127,7 @@ def set_gamemode(value, gamemode):
     menu.add_generic_widget(quit_button)
 
 
+#game loop for player vs player mode
 def plaverVSPlayer():
     run = True
     finished = False
@@ -135,11 +136,10 @@ def plaverVSPlayer():
     firstMove = True
 
     while run:
-        #clock.tick(FPS)
         
         for event in pygame.event.get():
-            if event.type==pygame.KEYDOWN:
-                if event.key==pygame.K_RETURN and finished:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN and finished:
                     run = False
             if event.type == pygame.QUIT:
                 run = False
@@ -172,7 +172,7 @@ def plaverVSPlayer():
     
         game.update(time_elapsed)
     
-   
+#game loop for pc vs pc mode
 def pcVSPc():
     global diff_cvc_1
     global diff_cvc_2
@@ -188,11 +188,10 @@ def pcVSPc():
     time_elapsed = None
     
     while run:
-        #clock.tick(FPS)
         
         for event in pygame.event.get():
-            if event.type==pygame.KEYDOWN:
-                if event.key==pygame.K_RETURN and finished:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN and finished:
                     run = False
             if event.type == pygame.QUIT:
                 run = False
@@ -226,7 +225,6 @@ def pcVSPc():
                         end_time = time.perf_counter()
 
                     time_elapsed = end_time-start_time
-                    print("Elapsed time: ", time_elapsed)
 
                     game.selected = oldRow, oldCol
                     game.ai_move(finalRow, finalCol)
@@ -256,7 +254,6 @@ def pcVSPc():
 
 
                     time_elapsed = end_time-start_time
-                    print("Elapsed time: ", time_elapsed)
                     
                     game.selected = oldRow, oldCol
                     game.ai_move(finalRow, finalCol)
@@ -267,7 +264,7 @@ def pcVSPc():
     
         game.update(time_elapsed)
     
-
+#game loop for player vs pc mode
 def playerVSPc():
     global diff_pvc
     global order
@@ -281,8 +278,8 @@ def playerVSPc():
     while run:
         
         for event in pygame.event.get():
-            if event.type==pygame.KEYDOWN:
-                if event.key==pygame.K_RETURN and finished:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN and finished:
                     run = False
             if event.type == pygame.QUIT:
                 run = False
@@ -332,7 +329,6 @@ def playerVSPc():
                         end_time = time.perf_counter()
 
                     time_elapsed = end_time-start_time
-                    print("Elapsed time: ", time_elapsed)
                     
                     game.selected = oldRow, oldCol
                     game.ai_move(finalRow, finalCol)
@@ -343,7 +339,7 @@ def playerVSPc():
 
         game.update(time_elapsed)
 
-
+#function for mode selection
 def start_the_game():
     global diff_pvc
     global diff_cvc_1
@@ -357,7 +353,7 @@ def start_the_game():
     elif mode == 3:
         pcVSPc()
 
-
+#function go get the position of the mouse in the screen
 def get_row_col_from_mouse(pos):
     x,y = pos
     row = y // SQUARE_SIZE
@@ -365,7 +361,7 @@ def get_row_col_from_mouse(pos):
 
     return row,col
 
-
+#main function of the program
 def main():
     run = True
 

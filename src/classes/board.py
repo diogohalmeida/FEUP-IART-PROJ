@@ -2,27 +2,29 @@ from .piece import Piece
 from constants import *
 
 class Board:
+
+    #Board class constructor
     def __init__(self):
         self.board = []
         self.blackPieces = []
         self.whitePieces = []
         self.create_board()
 
+    #method that creates a list of lists to represent the board in the initial state
     def create_board(self):
         for row in range(ROWS):
             self.board.append([])
             for col in range(COLS):
                 if (col == 1 and row == 0) or (col == 3 and row == 0) or (col == 2 and row == 3):
-                    #piece = Piece("white", row, col)
                     self.board[row].append(2)
                     self.whitePieces.append((row,col))
                 elif (col == 2 and row == 1) or (col == 1 and row == 4) or (col == 3 and row == 4):
-                    #piece = Piece("black", row, col)
                     self.board[row].append(1)
                     self.blackPieces.append((row,col))
                 else:
                     self.board[row].append(0)
 
+    #method that converts the list of lists into a string to be easier to verify if there is a tie in the game
     def board_as_string(self):
         result = ""
         for i in range(0,5):
@@ -31,14 +33,15 @@ class Board:
 
         return result
 
-
+    #method to get the black pieces
     def get_black_pieces(self):
         return self.blackPieces
 
+    #method to get the white pieces
     def get_white_pieces(self):
         return self.whitePieces
 
-
+    #method that moves the piece in the position (oldRow, oldCol) to the new position (newRow, newCol)
     def move_piece(self,oldRow, oldCol, newRow, newCol):
         piece = self.board[oldRow][oldCol]
         
@@ -53,10 +56,11 @@ class Board:
         self.board[oldRow][oldCol] = 0
         self.board[newRow][newCol] = piece
 
-
+    #method to get the piece in the position (row, col)    
     def get_piece(self,row,col):
         return self.board[row][col]
     
+    #method that calculates the valid moves for a piece in the position (row,col)
     def get_valid_moves(self, row, col):
         moves = []
         #Left
@@ -188,6 +192,7 @@ class Board:
 
         return moves
 
+    #method that verifies if there is a three in a row given the last move made (row,col) by the player (piece)
     def threeInRow(self,row,col,piece):
         
         #TopLeft
@@ -257,7 +262,7 @@ class Board:
 
         return -1
 
-
+    #method that verifies if there is a two in a row given the last move made (row,col) by the player (piece)
     def twoInRow(self,row,col,piece):
         #TopLeft
         if row > 0 and col > 0:
@@ -303,7 +308,7 @@ class Board:
 
         return -1
 
-
+    #method that verifies if there is a space between two pieces in a row given the last move made (row,col) by the player (piece)
     def twoPiecesClose(self, row, col, piece):
         
         #TopLeft

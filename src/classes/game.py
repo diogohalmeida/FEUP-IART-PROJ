@@ -7,6 +7,7 @@ import random
 
 class Game:
 
+    #Game class constructor
     def __init__(self,window, gamemode):
         self._init()
         self.window = window
@@ -16,7 +17,7 @@ class Game:
         self.button = None
         self.time = None
 
-
+    #method to update the game state
     def update(self, time_elapsed):
         if time_elapsed != None:
             self.time = time_elapsed
@@ -26,6 +27,7 @@ class Game:
         self.draw_valid_moves(self.valid_moves)
         pygame.display.update()
 
+    #private method to initialize class attributes
     def _init(self):
         self.selected = None
         self.board = Board()
@@ -37,6 +39,7 @@ class Game:
         self.hintSquareToMove = None
         self.nodes = 0
 
+    #method to draw the game board on screen
     def drawBoard(self):
         self.window.fill((76,188,228))
         
@@ -56,7 +59,7 @@ class Game:
                 if piece != 0:
                     self.window.blit(color_dic[piece], (SQUARE_SIZE * col - 10, SQUARE_SIZE * row - 10))
 
-
+    #method to draw the right side of the screen
     def drawSideBoard(self):
         if self.player == 1:
             myfont = pygame.font.SysFont('', 60)
@@ -122,21 +125,27 @@ class Game:
             text_rect = sideboard_title.get_rect(center=(1000, 750))
             self.window.blit(sideboard_title, text_rect)
 
+    #method to reset the game state
     def reset(self):
        self._init()
 
+    #method to get the current player (turn)
     def getPlayer(self):
         return self.player
 
+    #method to get the last move made
     def getLastMove(self):
         return self.lastMove
 
+    #method to get the current board
     def getBoard(self):
         return self.board
 
+    #method to update the last move made
     def updateLastMove(self,row,col):
         self.lastMove = row,col
 
+    #method that shows to the player what are the possible moves for the selected piece
     def select(self,row,col):
         if self.selected:
             result = self.move(row,col)
@@ -152,6 +161,7 @@ class Game:
         
         return False
 
+    #method that moves a piece and changes turn
     def move(self,row,col):
         piece = self.board.get_piece(row,col)
         if self.selected and piece == 0 and (row,col) in self.valid_moves:
@@ -164,12 +174,14 @@ class Game:
         
         return True
 
+    #method that executes the ai move
     def ai_move(self, row, col):
         oldRow, oldCol = self.selected
         self.board.move_piece(oldRow,oldCol, row, col)
         self.updateLastMove(row,col)
         self.change_turn()
 
+    #method that changes the turn
     def change_turn(self):
         self.valid_moves = []
         self.player = 3 - self.player
@@ -180,7 +192,7 @@ class Game:
         else:
             self.boards.update({self.board.board_as_string() : 1})
 
-
+    #method that draws the valid moves on the screen
     def draw_valid_moves(self,moves):
         for move in moves:
             row, col = move
@@ -189,6 +201,7 @@ class Game:
             else:
                 self.window.blit(GRAY_DOT,(SQUARE_SIZE*col+66,SQUARE_SIZE*row+66))
 
+    #method that verifies if the game is over or not
     def checkWin(self):
         if self.lastMove == None :
             return -1
@@ -199,7 +212,7 @@ class Game:
         self.winner = self.board.threeInRow(row,col, 3-self.player)  
         return self.board.threeInRow(row,col, 3-self.player)
 
-    
+    #method that evaluates the score of the board in easy level
     def easyLevelHeuristics(self, row, col, player):
         if self.board.threeInRow(row, col, player) == player:
             return 1000
@@ -207,6 +220,7 @@ class Game:
         else:
             return 0
 
+    #method that evaluates the score of the board in medium level
     def mediumLevelHeuristics(self, row, col, player):
         if self.board.threeInRow(row, col, player) == player:
             return 1000
@@ -217,6 +231,7 @@ class Game:
         else:
             return 0
 
+    #method that evaluates the score of the board in hard level (best heuristic)
     def hardLevelHeuristics(self, row, col, player):
         if self.board.threeInRow(row, col, player) == player:
             return 1000
@@ -231,6 +246,7 @@ class Game:
             return 0
 
 
+    #method that chooses the heuristic according to the level selected in the menu
     def chooseHeuristics(self, level, row, col, player):
         if level == 1:
             return self.easyLevelHeuristics(row, col, player)
@@ -239,6 +255,7 @@ class Game:
         elif level == 6:
             return self.hardLevelHeuristics(row, col, player)
 
+    #method that implements the maximum part of the minimax with alpha-beta cuts algorithm 
     def max_with_alpha_beta_cuts(self, lastRow, lastCol, maxDepth, alpha, beta, player, ordering, level):
 
         maxv = -2000
@@ -318,6 +335,7 @@ class Game:
         return (maxv, finalOldRow, finalOldCol, finalRow, finalCol)
 
 
+    #method that implements the minimum part of the minimax with alpha-beta cuts algorithm 
     def min_with_alpha_beta_cuts(self, lastRow, lastCol, maxDepth, alpha, beta, player, ordering, level):
 
         minv = 2000
@@ -398,6 +416,7 @@ class Game:
         return (minv, finalOldRow , finalOldCol ,finalRow, finalCol)
 
 
+    #method that implements the maximum part of the minimax algorithm 
     def max(self, lastRow, lastCol, maxDepth, player, ordering, level):
 
         maxv = -2000
@@ -471,7 +490,7 @@ class Game:
         return (maxv, finalOldRow, finalOldCol, finalRow, finalCol)
 
                     
-
+    #method that implements the minimum part of the minimax algorithm 
     def min(self, lastRow, lastCol, maxDepth, player, ordering, level):
 
         minv = 2000
