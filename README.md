@@ -12,7 +12,7 @@ pip install pygame-menu
 ```
 
 ## How ro run
-- In a Python IDE:
+- In a Python IDE, in the main.py file:
     -  press run.  
 
 - In the command line, for windows, in the src directory:
