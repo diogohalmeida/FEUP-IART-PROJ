@@ -1,28 +1,56 @@
+import warnings
+warnings.filterwarnings('ignore')
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sb
 
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.svm import SVC
 
 import numpy as np
 from sklearn.model_selection import StratifiedKFold
 from sklearn.model_selection import cross_val_score
 
 from sklearn.model_selection import GridSearchCV
+from sklearn.neural_network import MLPClassifier
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
 
 import sklearn.tree as tree
 
+from sklearn.metrics import classification_report, accuracy_score, confusion_matrix
+
+
+
 ten_k_fillings_data = pd.read_csv('10_k_fillings.csv')
 ten_k_fillings_data.rename(columns={'Unnamed: 0':'Company'}, inplace=True)
+clean_data = ten_k_fillings_data.drop(columns=["Company"])
 #ten_k_fillings_data.head()
 
 variation_data = pd.read_csv('price_variation.csv')
 variation_data.rename(columns={'Unnamed: 0':'Company'}, inplace=True)
+clean_data_test = variation_data.drop(columns=["Company"])
 #variation_data.head()
 
-full_data = pd.merge(ten_k_fillings_data, variation_data, on='Company', how='inner')
+#full_data = pd.merge(ten_k_fillings_data, variation_data, on='Company', how='inner')
 
+
+
+train_split, test_split = train_test_split(clean_data, random_state=1, test_size=0.25, stratify=clean_data['class'])
+
+X_train = train_split.iloc[:, :-1].values
+y_train = train_split.iloc[:, -1].values
+X_test = test_split.iloc[:, :-1].values
+y_test = test_split.iloc[:, -1].values
+
+
+scaler = StandardScaler()
+scaler.fit(X_train)
+
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.fit_transform(X_test)
 
 #sb.pairplot(full_data, hue='class')
 
@@ -38,12 +66,12 @@ full_data = pd.merge(ten_k_fillings_data, variation_data, on='Company', how='inn
 
 
 #DATA HANDLING
-full_data.describe()
+#full_data.describe()
 
 
 #DECISION TREES
-all_inputs = full_data.drop(columns=["class","Company","2019 PRICE VAR [%]"])
-all_labels = full_data["class"].values
+#all_inputs = full_data.drop(columns=["class","Company","2019 PRICE VAR [%]"])
+#all_labels = full_data["class"].values
 
 # model_accuracies = []
 # for repetition in range(1000):
@@ -104,31 +132,138 @@ all_labels = full_data["class"].values
 # plt.ylabel('max_depth')
 # ;
 
-decision_tree_classifier = DecisionTreeClassifier()
-
-parameter_grid = {'criterion': ['gini', 'entropy'],
-                  'splitter': ['best', 'random'],
-                  'max_depth': [1, 2, 3, 4, 5],
-                  'max_features': [1, 2, 3, 4]}
-
-cross_validation = StratifiedKFold(n_splits=10)
-
-grid_search = GridSearchCV(decision_tree_classifier,
-                           param_grid=parameter_grid,
-                           cv=cross_validation)
-
-grid_search.fit(all_inputs, all_labels)
-print('Best score: {}'.format(grid_search.best_score_))
-print('Best parameters: {}'.format(grid_search.best_params_))
-
-decision_tree_classifier = grid_search.best_estimator_
-
-with open('iris_dtc.dot', 'w') as out_file:
-    out_file = tree.export_graphviz(decision_tree_classifier, out_file=out_file)
 
 
 
+#DECISION TREES;
+# decision_tree_classifier = DecisionTreeClassifier(random_state=1)
 
+# parameter_grid = {'criterion': ['gini','entropy'],
+#                   'splitter': ['best', 'random'],
+#                   'max_depth': [1, 2, 3, 4, 5],
+#                   'max_features': [1, 2, 3, 4]}
+
+# grid_search = GridSearchCV(decision_tree_classifier,
+#                             param_grid=parameter_grid,
+#                             scoring='precision_weighted',
+#                             cv=10)
+
+# grid_search.fit(X_train, y_train)
+# print('Best score: {}'.format(grid_search.best_score_))
+# print('Best parameters: {}'.format(grid_search.best_params_))
+
+
+# decision_tree_classifier = grid_search.best_estimator_
+
+# with open('iris_dtc.dot', 'w') as out_file:
+#     out_file = tree.export_graphviz(decision_tree_classifier, out_file=out_file)
+   
+# predictions_train = grid_search.predict(X_train)
+# predictions_test = grid_search.predict(X_test) 
+
+# print(accuracy_score(y_train, predictions_train))
+# print(accuracy_score(y_test, predictions_test))
+
+# print(classification_report(y_train, predictions_train, target_names=['IGNORE', 'BUY']))
+# print(classification_report(y_test, predictions_test, target_names=['IGNORE', 'BUY']))
+    
+    
+#SVM  
+# svm_classifier = SVC(random_state=1)
+
+
+# tuned_parameters = [{'kernel': ['rbf', 'linear','poly','sigmoid'], 
+#                       'gamma': ['auto','scale', 1e-3, 1e-4], 
+#                       'C': [0.01, 0.1, 1, 10, 100],
+#                       'class_weight': ['balanced', None]}]
+
+
+# grid_search = GridSearchCV(svm_classifier,
+#                         param_grid=tuned_parameters,
+#                             scoring='precision_weighted',
+#                             n_jobs=-1,
+#                             cv=10)
+
+# grid_search.fit(X_train, y_train)
+
+# print('Best score: {}'.format(grid_search.best_score_))
+# print('Best parameters: {}'.format(grid_search.best_params_))
+
+# predictions_train = grid_search.predict(X_train)
+# predictions_test = grid_search.predict(X_test)
+
+# print(accuracy_score(y_train, predictions_train))
+# print(accuracy_score(y_test, predictions_test))
+# print(classification_report(y_train, predictions_train, target_names=['Ignore', 'Buy']))
+# print(classification_report(y_test, predictions_test, target_names=['Ignore', 'Buy']))
+
+
+#MLP
+# mlp_classifier = MLPClassifier(random_state=1, early_stopping=False)
+
+
+# tuned_parameters = {'hidden_layer_sizes': [(32,), (64,), (32, 64, 32)],
+#                     'activation': ['logistic','tanh', 'relu'],
+#                     'solver': ['adam', 'sgd', 'lbfgs'], #'lbfgs'
+#                     'alpha': [0.0001, 0.05],
+#                     'learning_rate': ['constant','adaptive']}
+
+# grid_search = GridSearchCV(mlp_classifier, 
+#                     tuned_parameters,
+#                     scoring='precision_weighted',
+#                     n_jobs=-1,
+#                     cv=10)
+
+# grid_search.fit(X_train, y_train)
+
+# print('Best score: {}'.format(grid_search.best_score_))
+# print('Best parameters: {}'.format(grid_search.best_params_))
+
+# predictions_train = grid_search.predict(X_train)
+# predictions_test = grid_search.predict(X_test)
+
+
+# print(accuracy_score(y_train, predictions_train))
+# print(accuracy_score(y_test, predictions_test))
+
+# print(confusion_matrix(y_train, predictions_train))
+# print(confusion_matrix(y_test, predictions_test))
+
+# print(classification_report(y_train, predictions_train, target_names=['IGNORE', 'BUY']))
+# print(classification_report(y_test, predictions_test, target_names=['IGNORE', 'BUY']))
+
+
+#KNN
+# knn_classifier = KNeighborsClassifier()
+
+# tuned_parameters = {'n_neighbors': list(range(1,30)),
+#                     'weights': ['uniform','distance'],
+#                     'p':[1,2]}
+
+# grid_search = GridSearchCV(knn_classifier, 
+#                     tuned_parameters,
+#                     scoring='precision_weighted',
+#                     n_jobs=-1,
+#                     cv=10)
+
+
+# grid_search.fit(X_train, y_train)
+
+# print('Best score: {}'.format(grid_search.best_score_))
+# print('Best parameters: {}'.format(grid_search.best_params_))
+
+# predictions_train = grid_search.predict(X_train)
+# predictions_test = grid_search.predict(X_test)
+
+
+# print(accuracy_score(y_train, predictions_train))
+# print(accuracy_score(y_test, predictions_test))
+
+# print(confusion_matrix(y_train, predictions_train))
+# print(confusion_matrix(y_test, predictions_test))
+
+# print(classification_report(y_train, predictions_train, target_names=['IGNORE', 'BUY']))
+# print(classification_report(y_test, predictions_test, target_names=['IGNORE', 'BUY']))
 
 
 
