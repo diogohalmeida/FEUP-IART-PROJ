@@ -17,6 +17,9 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import RandomForestClassifier
+
+import xgboost as xgb
 
 import sklearn.tree as tree
 
@@ -266,5 +269,62 @@ X_test = scaler.fit_transform(X_test)
 # print(classification_report(y_test, predictions_test, target_names=['IGNORE', 'BUY']))
 
 
+#Random Forest
+# tuned_parameters = {'n_estimators': [2048],
+#                     'max_features': ['auto', 'sqrt'],
+#                     'max_depth': [4, 6, 8],
+#                     'criterion': ['gini', 'entropy']}
+
+# grid_search = GridSearchCV(RandomForestClassifier(),
+#                     tuned_parameters,
+#                     n_jobs=-1,
+#                     scoring='precision_weighted',
+#                     cv=10)
+
+# grid_search.fit(X_train, y_train)
+
+# print('Best score: {}'.format(grid_search.best_score_))
+# print('Best parameters: {}'.format(grid_search.best_params_))
+
+# predictions_train = grid_search.predict(X_train)
+# predictions_test = grid_search.predict(X_test)
 
 
+# print(accuracy_score(y_train, predictions_train))
+# print(accuracy_score(y_test, predictions_test))
+
+# print(confusion_matrix(y_train, predictions_train))
+# print(confusion_matrix(y_test, predictions_test))
+
+# print(classification_report(y_train, predictions_train, target_names=['IGNORE', 'BUY']))
+# print(classification_report(y_test, predictions_test, target_names=['IGNORE', 'BUY']))
+
+
+#Extreme Gradient Boosting
+# tuned_parameters = {'learning_rate': [0.001],
+#                     'max_depth': [4],
+#                     'n_estimators': [2048]}
+
+# grid_search = GridSearchCV(xgb.XGBClassifier(),
+#                     tuned_parameters,
+#                     n_jobs=-1,
+#                     scoring='precision_weighted',
+#                     cv=10)
+
+# grid_search.fit(X_train, y_train)
+
+# print('Best score: {}'.format(grid_search.best_score_))
+# print('Best parameters: {}'.format(grid_search.best_params_))
+
+# predictions_train = grid_search.predict(X_train)
+# predictions_test = grid_search.predict(X_test)
+
+
+# print(accuracy_score(y_train, predictions_train))
+# print(accuracy_score(y_test, predictions_test))
+
+# print(confusion_matrix(y_train, predictions_train))
+# print(confusion_matrix(y_test, predictions_test))
+
+# print(classification_report(y_train, predictions_train, target_names=['IGNORE', 'BUY']))
+# print(classification_report(y_test, predictions_test, target_names=['IGNORE', 'BUY']))
