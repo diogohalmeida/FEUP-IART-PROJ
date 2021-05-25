@@ -17,9 +17,6 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.ensemble import RandomForestClassifier
-
-import xgboost as xgb
 
 import sklearn.tree as tree
 
@@ -190,7 +187,7 @@ grid_search = GridSearchCV(decision_tree_classifier,
                             scoring='precision_weighted',
                             cv=10)
 
-grid_search.fit(X_train_os, y_train_os)
+grid_search.fit(X_train, y_train)
 print('Best score: {}'.format(grid_search.best_score_))
 print('Best parameters: {}'.format(grid_search.best_params_))
 
@@ -369,3 +366,6 @@ print(classification_report(y_test, predictions_test, target_names=['IGNORE', 'B
 
 # print(classification_report(y_train, predictions_train, target_names=['IGNORE', 'BUY']))
 # print(classification_report(y_test, predictions_test, target_names=['IGNORE', 'BUY']))
+
+
+
