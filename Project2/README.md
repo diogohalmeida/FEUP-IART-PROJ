@@ -16,7 +16,7 @@ conda install numpy pandas scikit-learn matplotlib seaborn
 conda install -c conda-forge watermark
 ```
 ```
-https://anaconda.org/conda-forge/imbalanced-learn
+conda install -c conda-forge imbalanced-learn
 ```
 
 # Running 
