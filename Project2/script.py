@@ -22,6 +22,11 @@ import sklearn.tree as tree
 
 from sklearn.metrics import classification_report, accuracy_score, confusion_matrix
 
+from imblearn.over_sampling import SMOTE
+from imblearn.under_sampling import RandomUnderSampler
+
+from collections import Counter
+
 
 
 ten_k_fillings_data = pd.read_csv('10_k_fillings.csv')
@@ -50,34 +55,21 @@ to_drop = [column for column in upper.columns if any(upper[column] > 0.95)]
 clean_data.drop(to_drop, axis=1, inplace=True)
 
 
-down_price_data = clean_data.loc[clean_data['class'] == 0]
-up_price_data = clean_data.loc[clean_data['class'] == 1]
+all_inputs = clean_data.iloc[:, :-1].values
+all_labels = clean_data.iloc[:, -1].values
 
-os_dataset = pd.concat([down_price_data.sample(n=451, random_state=1, replace=True), up_price_data])
-us_dataset = pd.concat([down_price_data, up_price_data.sample(n=187, random_state=1)])
+(X_train, X_test, y_train, y_test) = train_test_split(all_inputs, all_labels, random_state=1, test_size=0.25, stratify=clean_data['class'])
 
+print(Counter(y_train))
 
+os = SMOTE(random_state=1)
+us = RandomUnderSampler(random_state=1)
 
-train_split, test_split = train_test_split(clean_data, random_state=1, test_size=0.25, stratify=clean_data['class'])
+os_inputs, os_labels = os.fit_resample(X_train, y_train)
+print(Counter(os_labels))
 
-train_split_os, test_split_os = train_test_split(os_dataset, random_state=1, test_size=0.25, stratify=os_dataset['class'])
-
-train_split_us, test_split_us = train_test_split(us_dataset, random_state=1, test_size=0.25, stratify=us_dataset['class'])
-
-X_train = train_split.iloc[:, :-1].values
-y_train = train_split.iloc[:, -1].values
-X_test = test_split.iloc[:, :-1].values
-y_test = test_split.iloc[:, -1].values
-
-X_train_os = train_split_os.iloc[:, :-1].values
-y_train_os = train_split_os.iloc[:, -1].values
-X_test_os = test_split_os.iloc[:, :-1].values
-y_test_os = test_split_os.iloc[:, -1].values
-
-X_train_us = train_split_us.iloc[:, :-1].values
-y_train_us = train_split_us.iloc[:, -1].values
-X_test_us = test_split_us.iloc[:, :-1].values
-y_test_us = test_split_us.iloc[:, -1].values
+us_inputs, us_labels = us.fit_resample(X_train, y_train)
+print(Counter(us_labels))
 
 
 scaler = StandardScaler()
@@ -85,10 +77,10 @@ scaler.fit(X_train)
 
 X_train = scaler.fit_transform(X_train)
 X_test = scaler.fit_transform(X_test)
-X_train_os = scaler.fit_transform(X_train_os)
-X_test_os = scaler.fit_transform(X_test_os)
-X_train_us = scaler.fit_transform(X_train_us)
-X_test_us = scaler.fit_transform(X_test_us)
+
+os_inputs = scaler.fit_transform(os_inputs)
+us_inputs = scaler.fit_transform(us_inputs)
+
 
 
 #sb.pairplot(full_data, hue='class')
@@ -194,6 +186,8 @@ print('Best parameters: {}'.format(grid_search.best_params_))
 
 decision_tree_classifier = grid_search.best_estimator_
 
+plt.hist(cross_val_score(decision_tree_classifier, X_train, y_train, cv=10))
+
 with open('iris_dtc.dot', 'w') as out_file:
     out_file = tree.export_graphviz(decision_tree_classifier, out_file=out_file)
    
@@ -229,6 +223,10 @@ print(classification_report(y_test, predictions_test, target_names=['IGNORE', 'B
 # print('Best score: {}'.format(grid_search.best_score_))
 # print('Best parameters: {}'.format(grid_search.best_params_))
 
+# svm_classifier = grid_search.best_estimator_
+
+# plt.hist(cross_val_score(svm_classifier, X_train, y_train, cv=10))
+
 # predictions_train = grid_search.predict(X_train)
 # predictions_test = grid_search.predict(X_test)
 
@@ -259,6 +257,10 @@ print(classification_report(y_test, predictions_test, target_names=['IGNORE', 'B
 
 # print('Best score: {}'.format(grid_search.best_score_))
 # print('Best parameters: {}'.format(grid_search.best_params_))
+
+# mlp_classifier = grid_search.best_estimator_
+
+# plt.hist(cross_val_score(mlp_classifier, X_train, y_train, cv=10))
 
 # predictions_train = grid_search.predict(X_train)
 # predictions_test = grid_search.predict(X_test)
@@ -292,6 +294,10 @@ print(classification_report(y_test, predictions_test, target_names=['IGNORE', 'B
 
 # print('Best score: {}'.format(grid_search.best_score_))
 # print('Best parameters: {}'.format(grid_search.best_params_))
+
+# knn_classifier = grid_search.best_estimator_
+
+# plt.hist(cross_val_score(knn_classifier, X_train, y_train, cv=10))
 
 # predictions_train = grid_search.predict(X_train)
 # predictions_test = grid_search.predict(X_test)
